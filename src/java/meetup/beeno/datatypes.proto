@@ -1,0 +1,40 @@
+package hbase;
+
+import "google/protobuf/descriptor.proto";
+
+option java_package = "meetup.beeno";
+option java_outer_classname = "HDataTypes";
+
+option optimize_for = SPEED;
+
+message DateTime {
+	required int64 timestamp = 1;
+	optional string timezone = 2;
+}
+
+message JavaEnum {
+	required string type = 1;
+	required string value = 2;
+}
+
+message StringList {
+	repeated string values = 1;
+}
+
+message HField {
+	// list of know field types
+	enum Type { TEXT = 1; INTEGER = 2; FLOAT = 3; BOOLEAN = 4; BINARY = 5; DATETIME = 6; JAVAENUM = 7; STRINGLIST = 8; }
+
+	// which value is stored
+	required Type type = 1;
+
+	// one of the following will be stored as the message value
+	optional string text = 2;
+	optional int64 integer = 3;
+	optional double float = 4;
+	optional bool boolean = 5;
+	optional bytes binary = 6;
+	optional DateTime date_time = 7;
+	optional JavaEnum java_enum = 8;
+	optional StringList string_list = 9;
+}

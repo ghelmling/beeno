@@ -1,0 +1,82 @@
+<project name="beeno" basedir="." default="jar">
+
+  <property environment="env"/>
+
+  <property name="project.title" value="Meetup Beeno" />
+  <property name="project.version" value="0.1" />
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="dist.dir" value="${basedir}/dist" />
+  <property name="lib.dir" value="${basedir}/lib" />
+  <property name="src.dir" value="${basedir}/src/java" />
+
+  <path id="project.class.path">
+    <fileset dir="${lib.dir}" includes="**/*.jar" />
+  </path>
+
+  <!-- ====================== Prep Work =========================================== -->
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${dist.dir}" failonerror="false"/>
+    <delete dir="${build.dir}" failonerror="false"/>
+  </target>
+
+
+  <!-- ====================== Compilation Targets ================================= -->
+
+  <!-- build the source -->
+  <target name="compile" depends="init">
+    <javac debug="yes" srcdir="${src.dir}" destdir="${build.dir}" deprecation="true" source="1.5" nowarn="true" >
+      <classpath refid="project.class.path"/>
+      <compilerarg line="-Xmaxerrs 10000"/>
+    </javac>     
+  </target>
+
+  <!-- really build all source -->
+  <target name="compile_clean" depends="clean, compile"/>
+
+  <!-- package up classes into a jar file -->
+  <target name="jar" depends="compile_clean" 
+          description="Package compiled classes into a jar file for distribution">
+    <jar destfile="${dist.dir}/meetup.beeno-${project.version}.jar">
+      <fileset dir="${build.dir}" includes="**/*" />
+    </jar>
+  </target>
+
+  <!-- ====================== JavaDoc Generation ================================ -->
+
+  <target name="javadoc" description="Generate JavaDoc API docs">
+    <delete>
+      <fileset dir="${docs}" />
+    </delete>
+    <javadoc sourcepath="src"
+             destdir="${docs}"
+             packagenames= "meetup.beeno.*"
+             author="true"
+             source="1.5"
+             private="true"
+             version="true"
+             defaultexcludes="yes"
+             use="true"
+             maxmemory = "512m"
+             windowtitle="Meetup Beeno API Documentation"
+             doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
+             bottom="Copyright &#169; 2004 - Meetup Inc">
+      <classpath refid="project.class.path"/>
+    </javadoc>
+  </target> 
+
+  <!-- HBase: regenerate Protocol Buffer classes for data types -->
+  <target name="hbaseprotobuf" description="Generate Java classes and protocol buffer descriptors for HBase data types" depends="init">
+		
+    <exec executable="protoc">
+      <arg line="-I=/usr/local/include:${src.dir}" />
+      <arg line="--java_out=${src.dir}" />
+      <arg line="${src.dir}/meetup/beeno/datatypes.proto" />
+    </exec>
+  </target>
+
+</project>
