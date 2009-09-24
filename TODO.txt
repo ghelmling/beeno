@@ -5,3 +5,6 @@
   synchronize the stored values
   
 * HUtil pool configuration is static and all hard-coded.  This sucks.
+
+* Need unit tests.  Can start with some meetup db tests, but need to be able to bootstrap and run them.
+
