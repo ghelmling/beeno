@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import meetup.beeno.util.IOUtil;
+
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class QueryOpts implements Externalizable {

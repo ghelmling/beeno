@@ -5,6 +5,9 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Map;
 
+import meetup.beeno.util.HUtil;
+import meetup.beeno.util.PBUtil;
+
 import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.hbase.util.Bytes;
 

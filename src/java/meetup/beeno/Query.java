@@ -25,11 +25,11 @@ public class Query<T> {
 	protected QueryOpts opts = null;
 	protected EntityService<T> service = null;
 	
-	public Query(EntityService<T> service, Class entityClass) throws MappingException {
+	public Query(EntityService<T> service, Class<? extends T> entityClass) throws MappingException {
 		this(service, entityClass, null);
 	}
 
-	public Query(EntityService<T> service, Class entityClass, QueryOpts opts) 
+	public Query(EntityService<T> service, Class<? extends T> entityClass, QueryOpts opts) 
 		throws MappingException {
 		this.service = service;
 		this.entityInfo = EntityMetadata.getInstance().getInfo(entityClass);
@@ -46,14 +46,14 @@ public class Query<T> {
 		this.opts = opts;
 	}
 	
-	public Query add(Criteria.Expression expression) {
+	public Query<T> add(Criteria.Expression expression) {
 		this.opts.addCriteria(expression);
 		return this;
 	}
 	
 	public List<T> execute() throws HBaseException {
 		long t1 = System.nanoTime();
-		List entities = new ArrayList();
+		List<T> entities = new ArrayList<T>();
 		FilterList baseFilter = getCriteriaFilter(this.opts.getCriteria().getExpressions());
 		
 		ResultScanner scanner = null;
@@ -92,7 +92,7 @@ public class Query<T> {
 
 	public T executeSingle() throws HBaseException {
 		// TODO: explicitly limit to 1 record in filter?
-		List results = execute();
+		List<T> results = execute();
 		if (results != null && results.iterator().hasNext())
 			return (T) results.iterator().next();
 		

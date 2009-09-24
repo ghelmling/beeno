@@ -7,9 +7,13 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
 
+import meetup.beeno.filter.ColumnRowFilter;
+import meetup.beeno.filter.WhileMatchFilter;
+import meetup.beeno.util.IOUtil;
+import meetup.beeno.util.PBUtil;
+
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
-import org.apache.hadoop.hbase.filter.WhileMatchFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
@@ -39,7 +43,7 @@ public class Criteria implements Externalizable {
 	@Override
 	public void readExternal( ObjectInput in ) throws IOException,
 			ClassNotFoundException {
-		this.expressions = (in.readBoolean() ? null : (List)in.readObject());
+		this.expressions = (in.readBoolean() ? null : (List<Expression>)in.readObject());
 	}
 
 	@Override
@@ -68,7 +72,7 @@ public class Criteria implements Externalizable {
 		CompoundExpression wrapper = new CompoundExpression(false);
 		for (Expression e : expr) {
 			if (log.isDebugEnabled())
-				log.debug(String.format("Adding OR expression %s", expr));
+				log.debug(String.format("Adding OR expression %s", expr.toString()));
 			wrapper.add(e);
 		}
 		
@@ -188,7 +192,7 @@ public class Criteria implements Externalizable {
 		
 		public Filter getFilter(EntityMetadata.EntityInfo entityInfo) throws HBaseException {
 			if (log.isDebugEnabled())
-				log.debug(String.format("Adding filter: WhileMatchRowFilter for expr %s", this.required.toString()));
+				log.debug(String.format("Adding filter: WhileMatchFilter for expr %s", this.required.toString()));
 			
 			Filter newFilter = new WhileMatchFilter(required.getFilter(entityInfo));
 			return newFilter;
@@ -244,7 +248,7 @@ public class Criteria implements Externalizable {
 		public void readExternal( ObjectInput in ) throws IOException,
 				ClassNotFoundException {
 			this.oper = (FilterList.Operator)IOUtil.readEnum(in, FilterList.Operator.class);
-			this.subconditions = (in.readBoolean() ? null : (List)in.readObject());
+			this.subconditions = (in.readBoolean() ? null : (List<Expression>)in.readObject());
 		}
 
 		@Override

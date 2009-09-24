@@ -6,9 +6,11 @@ package meetup.beeno;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import meetup.beeno.util.HUtil;
+import meetup.beeno.util.PBUtil;
 
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.client.Get;
@@ -19,7 +21,6 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.PageFilter;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
 /**
@@ -40,7 +41,6 @@ public class ScanByIndex implements QueryStrategy {
 
 		try {
 			HTable table = null;
-			Collection<String> colFamilies = info.getColumnFamilyNames();
 			
 			try {
 				table = HUtil.getTable(info.getTablename());
@@ -60,7 +60,7 @@ public class ScanByIndex implements QueryStrategy {
 											  startrow, 
 											  baseFilter, 
 											  table,
-											  Bytes.toByteArrays(colFamilies.toArray(new String[0])));
+											  null);
 					long t2 = System.nanoTime();
 					log.info(String.format("HBASE TIMER: created indexed scanner in %f msec.", ((t2-t1)/1000000.0)));
 				}
@@ -72,8 +72,6 @@ public class ScanByIndex implements QueryStrategy {
 				
 					long t1 = System.nanoTime();
 					Scan scan = new Scan();
-					for (String fam : colFamilies)
-						scan.addFamily(Bytes.toBytes(fam));
 					if (startrow != null)
 						scan.setStartRow(startrow);
 					if (baseFilter != null)

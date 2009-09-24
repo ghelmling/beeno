@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import meetup.beeno.util.HUtil;
+
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.log4j.Logger;
@@ -270,7 +272,10 @@ public class EntityMetadata {
 		protected Pattern fieldRegex = null;
 		public MapField(HProperty prop, PropertyDescriptor beanProperty) {
 			super(prop, beanProperty);
-			this.fieldRegex = Pattern.compile(this.family+":.+");
+			if (this.column == null || this.column.equals("*"))
+				this.column = "";
+			
+			this.fieldRegex = Pattern.compile(this.family+":"+this.column+".+");
 			// fieldname should ignore wildcard pattern
 			this.fieldname = this.family + ":";
 		}

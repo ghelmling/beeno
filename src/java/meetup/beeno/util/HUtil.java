@@ -1,9 +1,13 @@
-package meetup.beeno;
+package meetup.beeno.util;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import meetup.beeno.EntityMetadata;
+import meetup.beeno.EntityMetadata.EntityInfo;
+import meetup.beeno.EntityMetadata.FieldMapping;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;

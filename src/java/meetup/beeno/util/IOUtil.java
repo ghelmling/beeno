@@ -1,7 +1,7 @@
 /**
  * 
  */
-package meetup.beeno;
+package meetup.beeno.util;
 
 import java.io.IOException;
 import java.io.ObjectInput;

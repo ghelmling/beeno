@@ -1,13 +1,13 @@
 package meetup.beeno;
 
 import java.io.IOException;
-import java.util.Collection;
+
+import meetup.beeno.util.HUtil;
 
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
 public class ScanNoIndex implements QueryStrategy {
@@ -25,11 +25,6 @@ public class ScanNoIndex implements QueryStrategy {
 		HTable table = null;
 		try {
 			table = HUtil.getTable(entityInfo.getTablename());
-	
-			Collection<String> colFamilies = entityInfo.getColumnFamilyNames();
-			for (String family : colFamilies) {
-				scan.addFamily( Bytes.toBytes(family) );
-			}
 	
 			scan.setFilter(baseFilter);
 			log.debug("Using filter: "+baseFilter);

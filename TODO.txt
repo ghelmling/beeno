@@ -1,0 +1,7 @@
+9/24/2009:
+
+* Implement some form of proxying for retrieved entity instances (possibly using cglib?) -- 
+  this would allow watching matched properties for changes so that we can properly 
+  synchronize the stored values
+  
+* HUtil pool configuration is static and all hard-coded.  This sucks.

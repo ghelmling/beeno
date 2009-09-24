@@ -1,12 +1,19 @@
 /**
  * 
  */
-package meetup.beeno;
+package meetup.beeno.util;
 
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
+
+import meetup.beeno.HDataTypes;
+import meetup.beeno.HDataTypes.DateTime;
+import meetup.beeno.HDataTypes.HField;
+import meetup.beeno.HDataTypes.JavaEnum;
+import meetup.beeno.HDataTypes.StringList;
+import meetup.beeno.HDataTypes.HField.Type;
 
 import org.apache.log4j.Logger;
 
