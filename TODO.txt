@@ -6,5 +6,15 @@
   
 * HUtil pool configuration is static and all hard-coded.  This sucks.
 
-* Need unit tests.  Can start with some meetup db tests, but need to be able to bootstrap and run them.
+* Need unit tests.  Can start with some meetup db tests, but need to
+  be able to bootstrap and run them.
 
+
+10/8/2009: 
+
+* Straight scans aren't very intuitive with the query API, you kind of
+  work-around it to get them.  Need to more easily enable this common
+  usage. 
+
+* For query scanning of secondary index tables, should maybe use row
+  prefix filters instead of value filters
