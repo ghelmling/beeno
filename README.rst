@@ -19,55 +19,55 @@ to share any common parent.
 
 Sample entity class::
 
- /**
-  * Simple entity class with mapped properties
-  */
- @HBaseEntity(name="test_simple")
- public static class SimpleEntity {
-     String id;
-     String stringProperty;
-     int intProperty;
-     float floatProperty;
-     double doubleProperty;
-     long longProperty;
+  /**
+   * Simple entity class with mapped properties
+   */
+  @HBaseEntity(name="test_simple")
+  public static class SimpleEntity {
+      String id;
+      String stringProperty;
+      int intProperty;
+      float floatProperty;
+      double doubleProperty;
+      long longProperty;
   
-     public SimpleEntity() {
-     }
+      public SimpleEntity() {
+      }
   
-     @HRowKey
-     public String getId() { return this.id; }
-     public void setId(String id) { this.id = id; }
+      @HRowKey
+      public String getId() { return this.id; }
+      public void setId(String id) { this.id = id; }
   
-     @HProperty(family="props", name="stringcol")
-     public String getStringProperty() { return stringProperty; }
-     public void setStringProperty( String stringProperty ) { 
-         this.stringProperty = stringProperty; 
-     }
+      @HProperty(family="props", name="stringcol")
+      public String getStringProperty() { return stringProperty; }
+      public void setStringProperty( String stringProperty ) { 
+          this.stringProperty = stringProperty; 
+      }
   
-     @HProperty(family="props", name="intcol")
-     public int getIntProperty() { return intProperty; }
-     public void setIntProperty( int intProperty ) {	
-         this.intProperty = intProperty;	
-     }
+      @HProperty(family="props", name="intcol")
+      public int getIntProperty() { return intProperty; }
+      public void setIntProperty( int intProperty ) {	
+          this.intProperty = intProperty;	
+      }
   
-     @HProperty(family="props", name="floatcol")
-     public float getFloatProperty() { return floatProperty; }
-     public void setFloatProperty( float floatProperty ) { 
-         this.floatProperty = floatProperty; 
-     }
+      @HProperty(family="props", name="floatcol")
+      public float getFloatProperty() { return floatProperty; }
+      public void setFloatProperty( float floatProperty ) { 
+          this.floatProperty = floatProperty; 
+      }
   
-     @HProperty(family="props", name="doublecol")
-     public double getDoubleProperty() { return doubleProperty; }
-     public void setDoubleProperty( double doubleProperty ) { 
-         this.doubleProperty = doubleProperty; 
-     }
+      @HProperty(family="props", name="doublecol")
+      public double getDoubleProperty() { return doubleProperty; }
+      public void setDoubleProperty( double doubleProperty ) { 
+          this.doubleProperty = doubleProperty; 
+      }
   
-     @HProperty(family="props", name="longcol")
-     public long getLongProperty() { return longProperty; }
-     public void setLongProperty( long longProperty ) { 
-         this.longProperty = longProperty; 
-     }
- }
+      @HProperty(family="props", name="longcol")
+      public long getLongProperty() { return longProperty; }
+      public void setLongProperty( long longProperty ) { 
+          this.longProperty = longProperty; 
+      }
+  }
 
 
 The following annotations are used to map the entity elements to an
@@ -152,40 +152,38 @@ Services
 Mapped entity instances can be saved or retrieved by use of a
 <code>com.meetup.db.hbase.EntityService<T></code> instance or one of
 it's subclasses.  This class supports a few basic operations to allow
-retrieving and saving entity instances.
+retrieving and saving entity instances.::
 
-::
+  public class EntityService<T> {
 
- public class EntityService<T> {
+      /**
+       * Returns an entity instance for the given unique row key.  If a row 
+       * for the given key does not exist, returns 'null'.
+       */
+      public T get( String rowkey )
 
-     /**
-      * Returns an entity instance for the given unique row key.  If a row 
-      * for the given key does not exist, returns 'null'.
-      */
-     public T get( String rowkey )
+      /**
+       * Inserts or updates the entity instance (HBase does not distinguish 
+       * between these operations) to its mapped HBase table
+       */
+      public void save( T entity )
 
-     /**
-      * Inserts or updates the entity instance (HBase does not distinguish 
-      * between these operations) to its mapped HBase table
-      */
-     public void save( T entity )
+      /**
+       * Saves all entity instances in the list to the mapped HBase table.
+       */
+      public void saveAll( List<T> entities )
 
-     /**
-      * Saves all entity instances in the list to the mapped HBase table.
-      */
-     public void saveAll( List<T> entities )
+      /**
+       * Deletes the row completely from the mapped HBase table.
+       */
+      public void delete( String rowKey )
 
-     /**
-      * Deletes the row completely from the mapped HBase table.
-      */
-     public void delete( String rowKey )
+      /**
+       * Returns a Query instance for the mapped class.
+       */
+      public Query<T> query()
 
-     /**
-      * Returns a Query instance for the mapped class.
-      */
-     public Query<T> query()
-
- }
+  }
 
 
 Query API
