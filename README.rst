@@ -1,6 +1,7 @@
-========================================
+=====================
 Meetup.Beeno Overview
-========================================
+=====================
+
 
 The native Java API for HBase provides fairly low level access to your
 data, representing rows essentially as maps of byte arrays.  To
@@ -12,7 +13,7 @@ it's much, much more limited in scope.
 
 
 Mapping Entities
-=========================
+================
 HBase entities are simple POJOs with mapping annotations for defining
 the HBase persistence information.  Mapped HBase entities do not need
 to share any common parent.
@@ -116,7 +117,7 @@ secondary index support.
 
 
 Map Properties
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 Map-type entity properties can only be mapped to an *entire* column
 family in a table.  This means that no other @HProperty annotations in
@@ -148,13 +149,13 @@ column names using the format
 
 
 Services
-=========================
+========
 Mapped entity instances can be saved or retrieved by use of a
 ``com.meetup.db.hbase.EntityService<T>`` instance or one of
 it's subclasses.  This class supports a few basic operations to allow
 retrieving and saving entity instances.::
 
-  public class EntityService<T> {
+  public class EntityService&lt;T&gt; {
 
       /**
        * Returns an entity instance for the given unique row key.  If a row 
@@ -171,7 +172,7 @@ retrieving and saving entity instances.::
       /**
        * Saves all entity instances in the list to the mapped HBase table.
        */
-      public void saveAll( List<T> entities )
+      public void saveAll( List&lt;T&gt; entities )
 
       /**
        * Deletes the row completely from the mapped HBase table.
@@ -181,13 +182,13 @@ retrieving and saving entity instances.::
       /**
        * Returns a Query instance for the mapped class.
        */
-      public Query<T> query()
+      public Query&lt;T&gt; query()
 
   }
 
 
 Query API
-=========================
+=========
 Some query examples from the feeds implementation.
 
 
