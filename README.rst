@@ -118,7 +118,7 @@ secondary index support.
 Map Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-Map-type entity properties can only be mapped to an ''entire'' column
+Map-type entity properties can only be mapped to an *entire* column
 family in a table.  This means that no other @HProperty annotations in
 the entity class can reference fields in the same column family or you
 will get an error about duplicate field mappings (the EntityService
@@ -128,7 +128,7 @@ retrieving an entity).
 A Map property should be annotated using the special convention 
   @HProperty( family="<column family", name="*", type="<value type>" )
 
-The '''name="*"''' argument denotes that the map entries should be
+The **name="*"** argument denotes that the map entries should be
 round-tripped to any columns in the column family, using the column
 name as the map entry key.
 
@@ -161,7 +161,7 @@ retrieving and saving entity instances.
      /**
       * Returns an entity instance for the given unique row key.  If a row 
       * for the given key does not exist, returns 'null'.
-	  */
+      */
      public T get( String rowkey )
 
      /**
