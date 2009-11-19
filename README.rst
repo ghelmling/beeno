@@ -78,18 +78,18 @@ method-level annotations on methods conforming to JavaBeans property
 conventions.
 
 
-@HBaseEntity( name="*tablename*" ) : 
+``@HBaseEntity( name="*tablename*" )``
   This class-level annotation defines which HBase table is used to store
   the entity's data.  This is required.
 
 
-@HRowKey : 
+``@HRowKey`` 
   This annotation defines the JavaBeans property used to store the
   entity record's row key.  This annotation is required for an entity
   class, and only a single @HRowKey annotation is allowed.
 
 
-@HProperty( family="*column family*", name="*column name*", type="(string|int_type|float_type|double_type|long_type)" )
+``@HProperty( family="*column family*", name="*column name*", type="(string|int_type|float_type|double_type|long_type)" )``
   This annotation maps a JavaBeans property to a field in the HBase
   table for the entity.  Since HBase groups fields into "column
   families", both the **family** and **name** arguments are
@@ -102,7 +102,7 @@ conventions.
   converting the underlying collection entry values.
 
 
-@HIndex( date_col="*family*:*column*", date_invert="(true|false)", extra_cols={} )
+``@HIndex( date_col="*family*:*column*", date_invert="(true|false)", extra_cols={} )``
   Declares an index table associated with this property (named as "*entitytable*-by_*property column*").
 
 
@@ -151,7 +151,7 @@ column names using the format
 Services
 ========
 Mapped entity instances can be saved or retrieved by use of a
-``com.meetup.db.hbase.EntityService<T>`` instance or one of
+``com.meetup.db.hbase.EntityService&lt;T&gt;`` instance or one of
 it's subclasses.  This class supports a few basic operations to allow
 retrieving and saving entity instances.::
 
