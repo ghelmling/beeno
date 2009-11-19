@@ -109,7 +109,7 @@ conventions.
 
 
 Properties as Collections
--------------------------
+
 
 The mapping framework includes rudimentary support for mapping
 collection types (java.util.Map or java.util.Collection instances) to
@@ -120,7 +120,7 @@ secondary index support.
 
 
 Map Properties
-**************
+
 
 Map-type entity properties can only be mapped to an *entire* column
 family in a table.  This means that no other @HProperty annotations in
@@ -139,7 +139,7 @@ name as the map entry key.
 
 
 Collection Properties
-*********************
+
 
 Other collection-type entity properties can be mapped to a set of
 columns in the HBase table, one column per collection entry.  A
