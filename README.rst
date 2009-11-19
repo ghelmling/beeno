@@ -77,7 +77,7 @@ method-level annotations on methods conforming to JavaBeans property
 conventions.
 
 
-@HBaseEntity( name="<tablename>" ) : 
+@HBaseEntity( name="*tablename*" ) : 
   This class-level annotation defines which HBase table is used to store
   the entity's data.  This is required.
 
@@ -88,7 +88,7 @@ conventions.
   class, and only a single @HRowKey annotation is allowed.
 
 
-@HProperty( family="<column family>", name="<column name>", type="(string|int_type|float_type|double_type|long_type)" )
+@HProperty( family="*column family*", name="*column name*", type="(string|int_type|float_type|double_type|long_type)" )
   This annotation maps a JavaBeans property to a field in the HBase
   table for the entity.  Since HBase groups fields into "column
   families", both the **family** and **name** arguments are
@@ -101,8 +101,8 @@ conventions.
   converting the underlying collection entry values.
 
 
-@HIndex( date_col="<family:column>", date_invert="(true|false)", extra_cols={} )
-  Declares an index table associated with this property (named as "<entitytable>-by_<property column>").
+@HIndex( date_col="*family*:*column*", date_invert="(true|false)", extra_cols={} )
+  Declares an index table associated with this property (named as "*entitytable*-by_*property column*").
 
 
 Properties as Collections
@@ -126,7 +126,7 @@ will not know which property to associate a field value with when
 retrieving an entity).
 
 A Map property should be annotated using the special convention 
-  @HProperty( family="<column family", name="*", type="<value type>" )
+  @HProperty( family="*column family*", name="*", type="*value type*" )
 
 The **name="*"** argument denotes that the map entries should be
 round-tripped to any columns in the column family, using the column
@@ -140,17 +140,17 @@ Other collection-type entity properties can be mapped to a set of
 columns in the HBase table, one column per collection entry.  A
 collection property should be mapped using the annotation format
 
-  @HProperty( family="<column family>", name="<base column name>", type="<entry value type>" )
+  @HProperty( family="*column family*", name="*base column name*", type="*entry value type*" )
 
 Individual collection entry values will then be assigned specific
 column names using the format
-"<family>:<basename>_<entryindex>".
+"*family*:*basename*_*entryindex*".
 
 
 Services
 =========================
 Mapped entity instances can be saved or retrieved by use of a
-<code>com.meetup.db.hbase.EntityService<T></code> instance or one of
+``com.meetup.db.hbase.EntityService<T>`` instance or one of
 it's subclasses.  This class supports a few basic operations to allow
 retrieving and saving entity instances.::
 
