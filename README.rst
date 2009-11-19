@@ -1,3 +1,4 @@
+
 =====================
 Meetup.Beeno Overview
 =====================
@@ -14,6 +15,7 @@ it's much, much more limited in scope.
 
 Mapping Entities
 ================
+
 HBase entities are simple POJOs with mapping annotations for defining
 the HBase persistence information.  Mapped HBase entities do not need
 to share any common parent.
@@ -108,6 +110,7 @@ conventions.
 
 Properties as Collections
 -------------------------
+
 The mapping framework includes rudimentary support for mapping
 collection types (java.util.Map or java.util.Collection instances) to
 table fields.  Since mapping of collection types dynamically
@@ -150,6 +153,7 @@ column names using the format
 
 Services
 ========
+
 Mapped entity instances can be saved or retrieved by use of a
 ``com.meetup.db.hbase.EntityService&lt;T&gt;`` instance or one of
 it's subclasses.  This class supports a few basic operations to allow
@@ -189,6 +193,7 @@ retrieving and saving entity instances.::
 
 Query API
 =========
+
 Some query examples from the feeds implementation.
 
 
@@ -215,3 +220,4 @@ Find all greetings from a given member::
                        Criteria.eq("memberId", memberId) ) )
              .add( Criteria.eq(“itemType”, “chapter_greeting”) );
   List items = query.execute();
+
