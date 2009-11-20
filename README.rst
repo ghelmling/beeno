@@ -6,7 +6,7 @@ The native Java API for HBase provides fairly low level access to your
 data, representing rows essentially as maps of byte arrays.  To
 simplify data access and manipulation, we've built a layer of common
 client utilities in the com.meetup.base.db.hbase package.  The core of
-this is a simple entity layer that maps Java classes -&gt; HBase tables
+this is a simple entity layer that maps Java classes -> HBase tables
 and back.  This layer borrows heavily from Hibernate and JPA, though
 it's much, much more limited in scope.
 
@@ -78,18 +78,18 @@ method-level annotations on methods conforming to JavaBeans property
 conventions.
 
 
-``@HBaseEntity( name="*tablename*" )``
+@HBaseEntity( name="*tablename*" )
     This class-level annotation defines which HBase table is used to store
     the entity's data.  This is required.
 
 
-``@HRowKey`` 
+@HRowKey
     This annotation defines the JavaBeans property used to store the
     entity record's row key.  This annotation is required for an entity
     class, and only a single @HRowKey annotation is allowed.
 
 
-``@HProperty( family="*column family*", name="*column name*", type="(string|int_type|float_type|double_type|long_type)" )``
+@HProperty( family="*column family*", name="*column name*", type="(string|int_type|float_type|double_type|long_type)" )
     This annotation maps a JavaBeans property to a field in the HBase
     table for the entity.  Since HBase groups fields into "column
     families", both the **family** and **name** arguments are
@@ -102,7 +102,7 @@ conventions.
     converting the underlying collection entry values.
 
 
-``@HIndex( date_col="*family*:*column*", date_invert="(true|false)", extra_cols={} )``
+@HIndex( date_col="*family*:*column*", date_invert="(true|false)", extra_cols={} )
     Declares an index table associated with this property (named as "*entitytable*-by_*property column*").
 
 
@@ -154,11 +154,11 @@ Services
 ========
 
 Mapped entity instances can be saved or retrieved by use of a
-``com.meetup.db.hbase.EntityService&lt;T&gt;`` instance or one of
+``com.meetup.db.hbase.EntityService<T>`` instance or one of
 it's subclasses.  This class supports a few basic operations to allow
 retrieving and saving entity instances.::
 
-    public class EntityService&lt;T&gt; {
+    public class EntityService<T> {
 
         /**
          * Returns an entity instance for the given unique row key.  If a row 
@@ -175,7 +175,7 @@ retrieving and saving entity instances.::
         /**
          * Saves all entity instances in the list to the mapped HBase table.
          */
-        public void saveAll( List&lt;T&gt; entities )
+        public void saveAll( List<T> entities )
 
         /**
          * Deletes the row completely from the mapped HBase table.
@@ -185,7 +185,7 @@ retrieving and saving entity instances.::
         /**
          * Returns a Query instance for the mapped class.
          */
-        public Query&lt;T&gt; query()
+        public Query<T> query()
 
     }
 
@@ -201,9 +201,9 @@ Find all items related to a discussion::
     FeedItemService service = new FeedItemService(DiscussionItem.class);
     QueryOpts opts = new QueryOpts();
     opts.setPageSize(-1); // all items
-    Query query = 
+    Query query =
         service.query(DiscussionItem.class, opts)
-               .add( Criteria.require( 
+               .add( Criteria.require(
                             Criteria.eq("threadId", threadId) ) );
     List items = query.execute();
 
@@ -219,4 +219,3 @@ Find all greetings from a given member::
                        Criteria.eq("memberId", memberId) ) )
                .add( Criteria.eq(“itemType”, “chapter_greeting”) );
     List items = query.execute();
-
