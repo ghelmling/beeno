@@ -1,0 +1,99 @@
+JyUnit Testing Framework
+============================================================
+
+JyUnit is a simple wrapper on top of JUnit and Jython to make writing
+unit tests easy.  JyUnit provides hooks to:
+ * capture test assertion results
+ * batch run all tests within a directory
+ * combine test results for Java JUnit tests and JyUnit scripts
+
+JyUnit is packaged as a Jython package.  The following modules are
+available:
+
+jyunit.util
+  All the core assertion statements and supporting hooks for JUnit
+
+  Supported assertion functions:
+  assertEquals( actual, expected [, mesg ] )
+
+  assertNotEquals( actual, expected [, mesg ] )
+
+  assertMoreThan( actual, expected [, mesg ] )
+
+  assertLessThan( actual, expected [, mesg ] )
+
+  assertFalse( condition [, mesg ] )
+  
+  assertNotNull( obj [, mesg ] )
+
+  assertNull( obj [, mesg ] )
+
+  assertNotSame( obj1, obj2 [, mesg ] )
+
+  fail( [ mesg ] )
+
+  error( err [, mesg ] )
+
+
+jyunit.run
+  Supporting classes for loading and running JyUnit scripts and JUnit
+  test cases and running in a batch.
+
+  Usually run as a script to execute batches of tests:
+
+  jython jyunit/run.py [options]
+    -h, --help               Show this usage information
+  	-o, --output=filename    Write test results to this file
+  	-r, --recipients=emails  Email the test results to these recipients (comma separated)
+  	-d, --directory=path     Use this as the test src directory
+  	-j, --javasrc=path       Source directory for Java JUnit test cases
+  	-p, --product=name       Product name ("meetup", "alliance"), only used for output
+  	-v, --verbose            Show extra information as tests are running
+
+
+Installing
+----------------------------------------
+
+Everything that you need is included in meetup_base.  If you have the
+meetup_base project checked out locally, then you just need to do the
+following to add jython to your project:
+
+ 1) Create a source directory for your jython tests -- this should be
+ distinct from the source directory for your Java JUnits tests
+
+ 2) Copy the meetup_base/tools/jython script to where you keep your
+ project scripts.  Edit the jython script to point to the correct
+ project paths for your project classpath script and jython source
+ directories.
+
+ 3) Copy the meetup_base/lib/jython.jar file to your project's lib
+ directory. 
+
+Writing a Test
+----------------------------------------
+
+Conventions:
+ * scripts should start with "test_" in the file name
+ * if scripts contain a "run_test" top level function, it will be executed
+
+Making assertions available:
+
+  from jyunit.util import *
+
+This makes all the assertion functions available in your script's
+namespace so you can call them directly:
+
+  res = ... some test result ...
+  assertEquals( res, "expected value" )
+
+
+Running Tests
+----------------------------------------
+
+Test scripts may be run individually, by invoking the script directly:
+
+  jython test_sample.py
+
+or by invoking the JyUnit run.py script on the test source directory:
+
+  jython /usr/local/meetup_base/jysrc/jyunit/run.py -d /path/to/testsrc

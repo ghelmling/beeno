@@ -16,6 +16,9 @@ import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
+/**
+ * Basic utilities to enable easier interaction with HBase.
+ */
 public class HUtil {
 	// max number of digits in a long value
 	private static final int LONG_CHAR_LENGTH = 19;
