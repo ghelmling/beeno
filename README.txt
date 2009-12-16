@@ -5,10 +5,10 @@ Meetup.Beeno Overview
 The native Java API for HBase provides fairly low level access to your
 data, representing rows essentially as maps of byte arrays.  To
 simplify data access and manipulation, we've built a layer of common
-client utilities in the com.meetup.base.db.hbase package.  The core of
-this is a simple entity layer that maps Java classes -> HBase tables
-and back.  This layer borrows heavily from Hibernate and JPA, though
-it's much, much more limited in scope.
+client utilities.  The core of this is a simple entity layer that maps
+Java classes -> HBase tables and back.  This layer borrows a bit
+conceptually from Hibernate and JPA, though it's much, much more
+limited in scope.
 
 
 Mapping Entities
