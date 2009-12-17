@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# get the full path to the jython script
+prgdir=$(
+prg=$0
+case $prg in
+(*/*) ;;
+(*) [ -e "$prg" ] || prg=$(command -v -- "$0")
+esac
+prgbase=$(dirname -- "$prg")
+cd -P -- "$prgbase" > /dev/null && pwd -P
+)
+
+basedir=$( cd -P -- "$prgdir/.." > /dev/null && pwd -P )
+
+. $prgdir/env.sh
+JYTHON_CP=$CP:$basedir/build
+export JYTHON_CP
+
+#export LOG4J_OPTS="-Dlog4j.configuration=log4j_test.properties" # to change default log level add -Dlog4j.info
+
+# quick compile if -c arg provided
+if [ "$1" = "-c" ]
+then
+	ant compile
+	shift
+fi
+
+# run with jdb if -d arg provided
+if [ "$1" = "-d" ]
+then
+	export JAVA="$JAVA_HOME/bin/jdb"
+	shift
+fi
+
+# cater to memory-hoggin tests
+#if [ -z "$JVM_OPTS" ];
+#then
+#	export JVM_OPTS="-Xmx768m"
+#fi
+
+# additional paths for python code
+export pypath=$basedir/test/jython
+
+. $prgdir/jython

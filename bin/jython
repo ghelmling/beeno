@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# get the full path to the jython script
+prgdir=$(
+prg=$0
+case $prg in
+(*/*) ;;
+(*) [ -e "$prg" ] || prg=$(command -v -- "$0")
+esac
+prgbase=$(dirname -- "$prg")
+cd -P -- "$prgbase" > /dev/null && pwd -P
+)
+
+basedir=$( cd -P -- "$prgdir/.." > /dev/null && pwd -P )
+
+. $basedir/bin/env.sh
+
+# Default settings
+if [ -z "$JAVA" ]; then
+	if [ -n "$JAVA_HOME" ]; then
+		JAVA=$JAVA_HOME/bin/java
+	else
+		JAVA=`which java`
+	fi
+fi
+
+if [ -z "$JAVA" ]; then
+	echo "No Java found.  Set JAVA or JAVA_HOME."
+	exit 1
+fi
+
+if [ -z "$JYTHON_CP" ]; then
+	JYTHON_CP=$CP
+fi
+
+if [ -z "$JAVA_OPTS" ]; then
+	JAVA_OPTS="-Xmx2048M -XX:MaxPermSize=128M"
+fi
+
+if [ -z "$LOG4J_OPTS" ]; then
+	LOG4J_OPTS="-Dlog4j.configuration=log4j.properties" # to change default log level add -Dlog4j.info
+fi
+
+# set jython's cache directory to a hidden dir in our current dir
+cachedir=/tmp/.cachedir
+cacheskip=false
+
+# default the jython home to the jython test dir
+pyhome=$basedir/src/jython
+
+# additional paths for python code
+pypath=$basedir/conf:$pypath
+
+# setup readline options (if libreadline-java available)
+# to use this you'll need to "emerge libreadline-java"
+if [ -f /usr/share/libreadline-java/lib/libreadline-java.jar ];
+then
+	JYTHON_CP=$JYTHON_CP:/usr/share/libreadline-java/lib/libreadline-java.jar
+	export LD_LIBRARY_PATH=/usr/lib64/libreadline-java:$LD_LIBRARY_PATH
+	PYOPTS="-Dpython.console=org.python.util.ReadlineConsole -Dpython.console.readlinelib=GnuReadline"
+fi
+#echo "JYTHON_CP=$JYTHON_CP"
+
+# exec, and also allow python access to private vars
+exec $JAVA -cp "$JYTHON_CP" $JAVA_OPTS $SSL_OPTS $LOG4J_OPTS -D"python.security.respectJavaAccessibility=false" -D"python.cachedir=$cachedir" -D"python.path=$pyhome:$pypath" -D"python.cachedir.skip=$cacheskip" $PYOPTS org.python.util.jython "$@"
