@@ -12,7 +12,7 @@ import java.util
 
 import com.google.protobuf
 
-from meetup.beeno.filter import ColumnRowFilter
+from meetup.beeno.filter import ColumnMatchFilter
 from meetup.beeno.util import PBUtil
 
 # constants for dicts
@@ -366,4 +366,4 @@ def eq(colname, colvalue):
 		valbytes = colvalue.toByteArray()
 	else:
 		valbytes = PBUtil.toBytes( colvalue )
-	return ColumnRowFilter( namebytes, ColumnRowFilter.CompareOp.EQUAL, valbytes )
+	return ColumnMatchFilter( namebytes, ColumnMatchFilter.CompareOp.EQUAL, valbytes )

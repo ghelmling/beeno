@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import meetup.beeno.EntityMetadata;
-import meetup.beeno.EntityMetadata.EntityInfo;
-import meetup.beeno.EntityMetadata.FieldMapping;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;
@@ -33,6 +31,14 @@ public class HUtil {
 	private static Logger log = Logger.getLogger(HUtil.class.getName());
 	
 	private static HTablePool pool = new HTablePool(new HBaseConfiguration(), MAX_POOL_SIZE);
+	
+	public static HTablePool getPool() {
+		return pool;
+	}
+	
+	public static void setPool(HTablePool newPool) {
+		pool = newPool;
+	}
 	
 	public static HTable getTable(String tablename) {
 		if (log.isDebugEnabled())

@@ -13,10 +13,10 @@ cd -P -- "$prgbase" > /dev/null && pwd -P
 
 basedir=$( cd -P -- "$prgdir/.." > /dev/null && pwd -P )
 
-for f in `ls $basedir/lib/*.jar`;
+CP=$basedir/conf
+for f in `find $basedir/lib/ -name '*.jar'`;
 do
 	CP=$CP:$f;
 done
-CP=$CP:$basedir/conf
 
 export CP

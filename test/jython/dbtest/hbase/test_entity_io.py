@@ -7,32 +7,38 @@ from jyunit.util import *
 import java.lang
 from java.util import ArrayList, HashSet, HashMap
 from org.apache.hadoop.hbase import HBaseClusterTestCase
+from org.apache.hadoop.hbase.client import HTablePool
 from meetup.beeno import EntityMetadata, EntityService, HBaseException, MappingException
 from meetup.beeno import TestEntities
+from meetup.beeno.util import HUtil
 
 class HBaseContext(HBaseClusterTestCase):
     def __init__(self):
         super(HBaseContext, self).__init__()
+        self.setName('beeno')
+
+        if self.conf.get('test.build.data') is None:
+            self.conf.set('test.build.data', '/tmp/beeno')
 
 hc = HBaseContext()
 
 def setup():
     hc.setUp()
-    
-	# create a dummy HBase table for testing
-	import db.hbase
-	admin = db.hbase.Admin()
+    HUtil.setPool( HTablePool( hc.conf, 5 ) )
+    # create a dummy HBase table for testing
+    import db.hbase
+    admin = db.hbase.Admin(hc.conf)
 
-	if not admin.exists("test_simple"):
-		admin.create("test_simple", {"props:": {}})
-	if not admin.exists("test_complex"):
-		admin.create("test_complex", {"props:": {db.hbase.VERSIONS: 10}, "extended:": {db.hbase.VERSIONS: 10}})
+    if not admin.exists("test_simple"):
+        admin.create("test_simple", {"props:": {}})
+    if not admin.exists("test_complex"):
+        admin.create("test_complex", {"props:": {db.hbase.VERSIONS: 10}, "extended:": {db.hbase.VERSIONS: 10}})
 
 def teardown():
     try:
         # clean up the dummy table
         import db.hbase
-        admin = db.hbase.Admin()
+        admin = db.hbase.Admin(hc.conf)
 
         #if admin.exists("test_simple"):
         #	admin.disable("test_simple")

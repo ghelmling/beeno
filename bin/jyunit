@@ -14,7 +14,8 @@ cd -P -- "$prgbase" > /dev/null && pwd -P
 basedir=$( cd -P -- "$prgdir/.." > /dev/null && pwd -P )
 
 . $prgdir/env.sh
-JYTHON_CP=$CP:$basedir/build
+
+JYTHON_CP=$basedir/build:$basedir/test/conf:$CP
 export JYTHON_CP
 
 #export LOG4J_OPTS="-Dlog4j.configuration=log4j_test.properties" # to change default log level add -Dlog4j.info

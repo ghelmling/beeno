@@ -5,6 +5,7 @@
   <property name="project.title" value="Meetup Beeno" />
   <property name="project.version" value="0.1" />
   <property name="build.dir" value="${basedir}/build" />
+  <property name="build.test" value="${basedir}/build/test" />
   <property name="dist.dir" value="${basedir}/dist" />
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="src.dir" value="${basedir}/src/java" />
@@ -57,7 +58,13 @@
   <!-- ====================== Run Tests ============================== -->
   <target name="test" depends="-jyunit_prepare"
 		  description="Run all unit tests">
-    <exec executable="${basedir}/bin/run_tests.sh" failonerror="yes" inputstring="${tests.files}">
+	<mkdir dir="${build.test}/data" />
+    <exec executable="${basedir}/bin/run_tests.sh" 
+		  failonerror="yes" 
+		  inputstring="${tests.files}">
+	  <!-- system properties need for hbase test case -->
+      <env key="JAVA_OPTS" value="-Dtest.build.data=${build.test}/data -Xmx2048M -XX:MaxPermSize=128M"/>
+
       <arg value="--javasrc=${test.src.dir}" />
       <arg value="--directory=${test.jysrc.dir}" />
       <arg value="--product=Meetup.Beeno" />
