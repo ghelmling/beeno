@@ -8,6 +8,7 @@
   <property name="dist.dir" value="${basedir}/dist" />
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="src.dir" value="${basedir}/src/java" />
+  <property name="test.src.dir" value="${basedir}/test/java" />
 
   <path id="project.class.path">
     <fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -29,7 +30,11 @@
 
   <!-- build the source -->
   <target name="compile" depends="init">
-    <javac debug="yes" srcdir="${src.dir}" destdir="${build.dir}" deprecation="true" source="1.5" nowarn="true" >
+    <javac debug="yes" srcdir="${src.dir}" destdir="${build.dir}" deprecation="true" source="1.6" nowarn="true" >
+      <classpath refid="project.class.path"/>
+      <compilerarg line="-Xmaxerrs 10000"/>
+    </javac>     
+    <javac debug="yes" srcdir="${test.src.dir}" destdir="${build.dir}" deprecation="true" source="1.6" nowarn="true" >
       <classpath refid="project.class.path"/>
       <compilerarg line="-Xmaxerrs 10000"/>
     </javac>     

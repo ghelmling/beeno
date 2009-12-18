@@ -7,7 +7,7 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.List;
 
-import meetup.beeno.filter.ColumnRowFilter;
+import meetup.beeno.filter.ColumnMatchFilter;
 import meetup.beeno.filter.WhileMatchFilter;
 import meetup.beeno.util.IOUtil;
 import meetup.beeno.util.PBUtil;
@@ -91,11 +91,11 @@ public class Criteria implements Externalizable {
 	}
 	
 	public static Expression eq(String prop, Object val) {
-		return new PropertyComparison(prop, val, ColumnRowFilter.CompareOp.EQUAL);
+		return new PropertyComparison(prop, val, ColumnMatchFilter.CompareOp.EQUAL);
 	}
 
 	public static Expression ne(String prop, Object val) {
-		return new PropertyComparison(prop, val, ColumnRowFilter.CompareOp.NOT_EQUAL);
+		return new PropertyComparison(prop, val, ColumnMatchFilter.CompareOp.NOT_EQUAL);
 	}
 
 	public static abstract class Expression implements Externalizable {		
@@ -146,13 +146,13 @@ public class Criteria implements Externalizable {
 	
 	public static class PropertyComparison extends PropertyExpression {
 		
-		private ColumnRowFilter.CompareOp op = null;
+		private ColumnMatchFilter.CompareOp op = null;
 		
 		public PropertyComparison() {
 			// for Externalizable
 		}
 		
-		public PropertyComparison(String prop, Object val, ColumnRowFilter.CompareOp op) {
+		public PropertyComparison(String prop, Object val, ColumnMatchFilter.CompareOp op) {
 			super(prop, val);
 			this.op = op;
 		}
@@ -169,7 +169,7 @@ public class Criteria implements Externalizable {
 				log.debug(String.format("PropertyComparison(%s, %s, %s): Creating ColumnRowFilter, column=%s", 
 						  this.property, this.value, this.op.toString(), mapping.getFieldName()));
 			}
-			return new ColumnRowFilter(Bytes.toBytes(mapping.getFieldName()), 
+			return new ColumnMatchFilter(Bytes.toBytes(mapping.getFieldName()), 
 										 this.op,
 										 PBUtil.toBytes(this.value),
 										 true);

@@ -1,7 +1,8 @@
 #
 # Test comparison operations for custom HBase filters
 #
-from com.meetup.base.db.hbase import *
+from meetup.beeno.filter import *
+from meetup.beeno.util import *
 
 from org.apache.hadoop.hbase import KeyValue
 from org.apache.hadoop.hbase.util import Bytes

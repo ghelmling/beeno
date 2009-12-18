@@ -23,12 +23,9 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.WritableByteArrayComparable;
-import org.apache.hadoop.io.ObjectWritable;
 
 /**
  * This filter is used to filter based on the value of a given column. It takes
@@ -38,7 +35,7 @@ import org.apache.hadoop.io.ObjectWritable;
  * a long and then compare it to a fixed long value, then you can pass in your
  * own comparator instead.
  */
-public class ColumnRowFilter implements Filter {
+public class ColumnMatchFilter implements Filter {
 
 	/** Comparison operators. */
 	public enum CompareOp {
@@ -59,12 +56,11 @@ public class ColumnRowFilter implements Filter {
 	private byte[] columnName;
 	private CompareOp compareOp;
 	private byte[] value;
-	private WritableByteArrayComparable comparator;
 	private boolean filterIfColumnMissing;
 	private boolean columnSeen = false;
 	private boolean columnFiltered = false;
 
-	public ColumnRowFilter() {
+	public ColumnMatchFilter() {
 		// for Writable
 	}
 
@@ -78,7 +74,7 @@ public class ColumnRowFilter implements Filter {
 	 * @param value
 	 *            value to compare column values against
 	 */
-	public ColumnRowFilter( final byte[] columnName, final CompareOp compareOp,
+	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp,
 			final byte[] value ) {
 		this(columnName, compareOp, value, true);
 	}
@@ -95,7 +91,7 @@ public class ColumnRowFilter implements Filter {
 	 * @param filterIfColumnMissing
 	 *            if true then we will filter rows that don't have the column.
 	 */
-	public ColumnRowFilter( final byte[] columnName, final CompareOp compareOp,
+	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp,
 			final byte[] value, boolean filterIfColumnMissing ) {
 		this.columnName = columnName;
 		this.compareOp = compareOp;
@@ -113,9 +109,8 @@ public class ColumnRowFilter implements Filter {
 	 * @param comparator
 	 *            Comparator to use.
 	 */
-	public ColumnRowFilter( final byte[] columnName, final CompareOp compareOp,
-			final WritableByteArrayComparable comparator ) {
-		this(columnName, compareOp, comparator, true);
+	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp ) {
+		this(columnName, compareOp, true);
 	}
 
 	/**
@@ -130,12 +125,10 @@ public class ColumnRowFilter implements Filter {
 	 * @param filterIfColumnMissing
 	 *            if true then we will filter rows that don't have the column.
 	 */
-	public ColumnRowFilter( final byte[] columnName, final CompareOp compareOp,
-			final WritableByteArrayComparable comparator,
+	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp,
 			boolean filterIfColumnMissing ) {
 		this.columnName = columnName;
 		this.compareOp = compareOp;
-		this.comparator = comparator;
 		this.filterIfColumnMissing = filterIfColumnMissing;
 	}
 
@@ -159,12 +152,7 @@ public class ColumnRowFilter implements Filter {
 
 	private boolean filterColumnValue( final byte[] data ) {
 		int compareResult;
-		if (comparator != null) {
-			compareResult = comparator.compareTo(data);
-		}
-		else {
-			compareResult = compare(value, data);
-		}
+		compareResult = compare(value, data);
 
 		switch (compareOp) {
 		case LESS:
@@ -222,8 +210,6 @@ public class ColumnRowFilter implements Filter {
 		}
 		columnName = Bytes.readByteArray(in);
 		compareOp = CompareOp.valueOf(in.readUTF());
-		comparator = (WritableByteArrayComparable) ObjectWritable.readObject(
-				in, new HBaseConfiguration());
 		filterIfColumnMissing = in.readBoolean();
 	}
 
@@ -237,8 +223,6 @@ public class ColumnRowFilter implements Filter {
 		}
 		Bytes.writeByteArray(out, columnName);
 		out.writeUTF(compareOp.name());
-		ObjectWritable.writeObject(out, comparator,
-				WritableByteArrayComparable.class, new HBaseConfiguration());
 		out.writeBoolean(filterIfColumnMissing);
 	}
 

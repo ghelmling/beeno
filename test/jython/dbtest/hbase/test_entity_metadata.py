@@ -4,9 +4,8 @@
 
 from jyunit.util import *
 
-from com.meetup.base.db.hbase import EntityMetadata, HBaseException, MappingException
-from com.meetup.db.hbase import TestEntities
-from com.meetup.feeds.db import FeedItem
+from meetup.beeno import EntityMetadata, HBaseException, MappingException
+from meetup.beeno import TestEntities
 
 import java.lang
 
@@ -35,15 +34,6 @@ class EntityTest(SimpleTest):
 
 
 def test_parsing():
-	# check feed table
-	expectedFields = {"info:actor_member": "memberId",
-					  "info:actor_chapter": "chapterId",
-					  "info:target_member": "targetMemberId",
-					  "info:item_type": "itemType",
-					  "info:pub_date": "publishTimestamp"}
-	feedtest = EntityTest(FeedItem, "FeedItem", expectedFields)
-	runTest(feedtest)
-	
 	######### check the entity mapping test cases
 	# simple success case
 	expectedFields = {"props:stringcol": "stringProperty",
