@@ -9,6 +9,7 @@
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="src.dir" value="${basedir}/src/java" />
   <property name="test.src.dir" value="${basedir}/test/java" />
+  <property name="test.jysrc.dir" value="${basedir}/test/jython" />
 
   <path id="project.class.path">
     <fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -20,7 +21,7 @@
     <mkdir dir="${dist.dir}"/>
   </target>
 
-  <target name="clean">
+  <target name="clean" description="Cleans up any previous build products" >
     <delete dir="${dist.dir}" failonerror="false"/>
     <delete dir="${build.dir}" failonerror="false"/>
   </target>
@@ -29,7 +30,8 @@
   <!-- ====================== Compilation Targets ================================= -->
 
   <!-- build the source -->
-  <target name="compile" depends="init">
+  <target name="compile" depends="init"
+		  description="Compile java classes">
     <javac debug="yes" srcdir="${src.dir}" destdir="${build.dir}" deprecation="true" source="1.6" nowarn="true" >
       <classpath refid="project.class.path"/>
       <compilerarg line="-Xmaxerrs 10000"/>
@@ -41,7 +43,8 @@
   </target>
 
   <!-- really build all source -->
-  <target name="compile_clean" depends="clean, compile"/>
+  <target name="compile_clean" depends="clean, compile"
+		  description="Compile java classes from scratch" />
 
   <!-- package up classes into a jar file -->
   <target name="jar" depends="compile_clean" 
@@ -49,6 +52,33 @@
     <jar destfile="${dist.dir}/meetup.beeno-${project.version}.jar">
       <fileset dir="${build.dir}" includes="**/*" />
     </jar>
+  </target>
+
+  <!-- ====================== Run Tests ============================== -->
+  <target name="test" depends="-jyunit_prepare"
+		  description="Run all unit tests">
+    <exec executable="${basedir}/bin/run_tests.sh" failonerror="yes" inputstring="${tests.files}">
+      <arg value="--javasrc=${test.src.dir}" />
+      <arg value="--directory=${test.jysrc.dir}" />
+      <arg value="--product=Meetup.Beeno" />
+      <!-- read test files list from stdin -->
+      <arg value="--file=-" />
+    </exec>	
+  </target>
+
+  <!-- prepare the standard test run (skips API/flow tests) -->
+  <target name="-jyunit_prepare" depends="compile_clean">
+	<pathconvert property="tests.files" pathsep="${line.separator}">
+	  <fileset dir="${test.src.dir}" id="tests.java">
+		<include name="**/*.java" />
+		<exclude name="**/*$py.java" />
+	  </fileset>
+	  <fileset dir="${test.jysrc.dir}" id="tests.jython">
+		<include name="**/test_*.py" />
+		<!-- BUSTED: environment -->
+		<exclude name="**/test_query.py" />
+	  </fileset>
+	</pathconvert>
   </target>
 
   <!-- ====================== JavaDoc Generation ================================ -->
@@ -74,7 +104,7 @@
     </javadoc>
   </target> 
 
-  <!-- HBase: regenerate Protocol Buffer classes for data types -->
+  <!-- Regenerate Protocol Buffer classes for data types -->
   <target name="hbaseprotobuf" description="Generate Java classes and protocol buffer descriptors for HBase data types" depends="init">
 		
     <exec executable="protoc">

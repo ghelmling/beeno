@@ -6,11 +6,19 @@ from jyunit.util import *
 
 import java.lang
 from java.util import ArrayList, HashSet, HashMap
+from org.apache.hadoop.hbase import HBaseClusterTestCase
 from meetup.beeno import EntityMetadata, EntityService, HBaseException, MappingException
-from com.meetup.db.hbase import TestEntities
+from meetup.beeno import TestEntities
 
+class HBaseContext(HBaseClusterTestCase):
+    def __init__(self):
+        super(HBaseContext, self).__init__()
+
+hc = HBaseContext()
 
 def setup():
+    hc.setUp()
+    
 	# create a dummy HBase table for testing
 	import db.hbase
 	admin = db.hbase.Admin()
@@ -21,17 +29,20 @@ def setup():
 		admin.create("test_complex", {"props:": {db.hbase.VERSIONS: 10}, "extended:": {db.hbase.VERSIONS: 10}})
 
 def teardown():
-	# clean up the dummy table
-	import db.hbase
-	admin = db.hbase.Admin()
+    try:
+        # clean up the dummy table
+        import db.hbase
+        admin = db.hbase.Admin()
 
-	#if admin.exists("test_simple"):
-	#	admin.disable("test_simple")
-	#	admin.drop("test_simple")
+        #if admin.exists("test_simple"):
+        #	admin.disable("test_simple")
+        #	admin.drop("test_simple")
 
-	#if admin.exists("test_complex"):
-	#	admin.disable("test_complex")
-	#	admin.drop("test_complex")
+        #if admin.exists("test_complex"):
+        #	admin.disable("test_complex")
+        #	admin.drop("test_complex")
+    finally:
+        hc.tearDown()
 
 
 def save_and_get():
