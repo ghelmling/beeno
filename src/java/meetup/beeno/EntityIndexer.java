@@ -13,17 +13,18 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
 /**
- * Generates updates for secondary index tables based on an update for the indexed table.
- * This implementation generates index keys based on a primary property value (from which the
- * index is mapped) and an optional date column, which can be appended to the key as is or as
+ * Generates updates for secondary index tables based on an update for
+ * the indexed table.  This implementation generates index keys based
+ * on a primary property value (from which the index is mapped) and an
+ * optional date column, which can be appended to the key as is or as
  * an inverted value for reverse chronological sorting.
  * 
- * Extra columns mapped in the index will be stored in index table row, along with the primary
- * property value and the date column (if present), and can be used for filtering in scanning 
- * the index.
+ * Extra columns mapped in the index will be stored in index table
+ * row, along with the primary property value and the date column (if
+ * present), and can be used for filtering in scanning the index.
  * 
- * TODO: Currently this implementation does not handle removing secondary index rows when a value is
- * removed!!!
+ * TODO: Currently this implementation does not handle removing
+ * secondary index rows when a value is removed!!!
  * 
  * @author garyh
  *
@@ -114,7 +115,8 @@ public class EntityIndexer {
 		Long dateVal = null;
 		
 		if (this.dateField != null) {
-			byte[] rawDate = getValue(this.dateField.family(), this.dateField.column(), familyMap);
+			byte[] rawDate = getValue(this.dateField.family(), 
+									  this.dateField.column(), familyMap);
 			HDataTypes.HField pbDate = PBUtil.readMessage(rawDate);
 			// dates are assumed to be Long!
 			if (pbDate != null && pbDate.getType() == HDataTypes.HField.Type.INTEGER)
@@ -124,7 +126,8 @@ public class EntityIndexer {
 		return dateVal;
 	}
 	
-	protected byte[] getValue(byte[] family, byte[] col, Map<byte[],List<KeyValue>> familyMap) {
+	protected byte[] getValue(byte[] family, byte[] col, 
+							  Map<byte[],List<KeyValue>> familyMap) {
 		byte[] val = null;
 		List<KeyValue> familyVals = familyMap.get(family);
 		if (familyVals != null) {
@@ -139,7 +142,8 @@ public class EntityIndexer {
 	}
 	
 	/** 
-	 * TODO: split this out into a separate interface for different implementations 
+	 * TODO: split this out into a separate interface for different
+	 * implementations
 	 */
 	public byte[] createIndexKey(byte[] primaryVal, Long date, byte[] origRow) {
 		byte[] key = new byte[0];
@@ -156,7 +160,8 @@ public class EntityIndexer {
 		// add on date, if specified
 		if (this.dateField != null && date != null) {
 			key = Bytes.add(key, 
-						Bytes.add(ROW_KEY_SEP, HUtil.toOrderedBytes(date, this.invertDate)) );
+						Bytes.add(ROW_KEY_SEP, 
+								  HUtil.toOrderedBytes(date, this.invertDate)) );
 		}
 		
 		// add on the original row key to ensure uniqueness
