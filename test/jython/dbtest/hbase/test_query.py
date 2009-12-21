@@ -6,81 +6,107 @@ from jyunit.util import *
 
 import java.lang
 
-from com.meetup.base.db.hbase import EntityMetadata, Query, Criteria, HBaseException
-from com.meetup.feeds.db import ChapterFeedItem, DiscussionItem, FeedItem, FeedItemService
+import db.hbase
+from org.apache.hadoop.hbase.client import HTablePool
+from meetup.beeno import EntityMetadata, EntityService, Query, Criteria, HBaseException
+from meetup.beeno.util import HUtil
+from meetup.beeno import TestEntities
+from dbtest.hbase import HBaseContext
+
+hc = HBaseContext()
+
+def setup():
+    hc.setUp()
+    HUtil.setPool( HTablePool( hc.conf, 5 ) )
+    # create a dummy HBase table for testing
+    import db.hbase
+    admin = db.hbase.Admin(hc.conf)
+
+    if not admin.exists("test_indexed"):
+        admin.create("test_indexed", {"props:": {}})	
+    if not admin.exists("test_indexed-by_intcol"):
+        admin.create("test_indexed-by_intcol", {"props:": {}, "__idx__:": {}})
+    if not admin.exists("test_indexed-by_stringcol"):
+        admin.create("test_indexed-by_stringcol", {"props:": {}, "__idx__:": {}})
+
+    srv = EntityService(TestEntities.IndexedEntity)
+    now = java.lang.System.currentTimeMillis()
+
+    srv.save( TestEntities.IndexedEntity("e1", "duck", 1, now - 100) )
+    srv.save( TestEntities.IndexedEntity("e2", "duck", 2, now - 80) )
+    srv.save( TestEntities.IndexedEntity("e3", "duck", 2, now - 60) )
+    srv.save( TestEntities.IndexedEntity("e4", "goose", 2, now - 40) )
 
 
-def query_by_member():
-	memId=4679998
-	srv = FeedItemService(FeedItem)
-	q = srv.query()
-	q.add( Criteria.eq( "memberId", java.lang.Integer(memId) ) )
-	items = q.execute()
+def teardown():
+    try:
+        pass
+        # clean up the dummy table
+        # import db.hbase
+        # admin = db.hbase.Admin(hc.conf)
 
-	cnt = 0
-	assertMoreThan(len(items), 0, "member ID should have returned at least 1 item")
-	for i in items:
-		print "#%d: %s" % (cnt, i.id)
-		cnt += 1
-		assertEquals(i.getMemberId(), memId)
-		print ""
-
-def query_by_chapter():
-	chapId=332719
-	srv = FeedItemService(ChapterFeedItem)
-	q = srv.query()
-	q.add( Criteria.eq( "targetChapterId", java.lang.Integer(chapId) ) )
-	items = q.execute()
-
-	cnt = 0
-	assertMoreThan(len(items), 0, "chapter ID should have returned at least 1 item")
-	for i in items:
-		print "#%d: %s" % (cnt, i.id)
-		cnt += 1
-		assertEquals(i.getTargetChapterId(), chapId)
-		print ""
+        # if admin.exists("test_indexed"):
+        #     admin.drop("test_indexed")
+        # if admin.exists("test_indexed-by_intcol"):
+        #     admin.drop("test_indexed-by_intcol")
+        # if admin.exists("test_indexed-by_stringcol"):
+        #     admin.drop("test_indexed-by_stringcol")
+    finally:
+        hc.tearDown()
 
 
+def query_by_string():
+    srv = EntityService(TestEntities.IndexedEntity)
+    # test indexing of a value with multiple entries
+    q = srv.query()
+    q.add( Criteria.require( Criteria.eq( "stringProperty", java.lang.String('duck') ) ) )
+    matches = q.execute()
+    assertEquals( len(matches), 3 )
+    assertEquals( matches[0].getId(), 'e1' )
+    assertEquals( matches[0].getStringProperty(), 'duck' )
+    assertEquals( matches[1].getId(), 'e2' )
+    assertEquals( matches[1].getStringProperty(), 'duck' )
+    assertEquals( matches[2].getId(), 'e3' )
+    assertEquals( matches[2].getStringProperty(), 'duck' )
 
-def query_by_chapter_type():
-	srv = FeedItemService(ChapterFeedItem)
-	q = srv.query()
-	q.add( Criteria.eq( "targetChapterId", java.lang.Integer(1370934) ) ).add( Criteria.eq( "itemType", java.lang.String("new_discussion") ) )
-	items = q.execute()
-
-	cnt = 0
-	assertMoreThan(len(items), 0, "chapter ID should have returned at least 1 item")
-	for i in items:
-		print "#%d: %s" % (cnt, i.id)
-		cnt += 1
-		assertEquals(i.getTargetChapterId(), 1370934)
-		assertEquals(i.getItemType(), 'new_discussion')
+    q = srv.query()
+    q.add( Criteria.require( Criteria.eq( "stringProperty", java.lang.String('goose') ) ) )
+    matches = q.execute()
+    assertEquals( len(matches), 1 )
+    assertEquals( matches[0].getId(), 'e4' )
+    assertEquals( matches[0].getStringProperty(), 'goose' )
 
 
-def query_by_discussion():
-	srv = FeedItemService(DiscussionItem)
-	q = srv.query()
-	q.add( Criteria.eq( "threadId", java.lang.Integer(6273891) ) )
-	items = q.execute()
+def query_by_int():
+    srv = EntityService(TestEntities.IndexedEntity)
+    # test indexing of integer values
+    q = srv.query()
+    q.add( Criteria.require( Criteria.eq( "intKey",	java.lang.Integer(2) ) ) )
+    matches = q.execute()
+    assertEquals( len(matches), 3 )
+    assertEquals( matches[0].getId(), 'e4', "Indexed entries should be in reverse timestamp order" )
+    assertEquals( matches[0].getIntKey(), 2 )
+    assertEquals( matches[1].getId(), 'e3', "Indexed entries should be in reverse timestamp order" )
+    assertEquals( matches[1].getIntKey(), 2 )
+    assertEquals( matches[2].getId(), 'e2', "Indexed entries should be in reverse timestamp order" )
+    assertEquals( matches[2].getIntKey(), 2 )
 
-	cnt = 0
-	assertMoreThan(len(items), 0, "thread ID should have returned at least 1 item")
-	for i in items:
-		print "#%d: %s" % (cnt, i.id)
-		cnt += 1
-		assertEquals(i.getThreadId(), 6273891)
-		print ""
+    q = srv.query()
+    q.add( Criteria.require( Criteria.eq( "intKey", java.lang.Integer(1) ) ) )
+    matches = q.execute()
+    assertEquals( len(matches), 1 )
+    assertEquals( matches[0].getId(), 'e1' )
+    assertEquals( matches[0].getIntKey(), 1 )
+
 
 def run_test():
-	query_by_member()
-	query_by_chapter()
-	query_by_chapter_type()
-	query_by_discussion()
+    try:
+        setup()
+        query_by_string()
+        query_by_int()
+    finally:
+        teardown()
 
 
 if __name__ == '__main__':
-	run_test()
-	
-
-
-
+    run_test()

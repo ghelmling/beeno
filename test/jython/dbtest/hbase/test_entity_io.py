@@ -6,19 +6,11 @@ from jyunit.util import *
 
 import java.lang
 from java.util import ArrayList, HashSet, HashMap
-from org.apache.hadoop.hbase import HBaseClusterTestCase
 from org.apache.hadoop.hbase.client import HTablePool
 from meetup.beeno import EntityMetadata, EntityService, HBaseException, MappingException
 from meetup.beeno import TestEntities
 from meetup.beeno.util import HUtil
-
-class HBaseContext(HBaseClusterTestCase):
-    def __init__(self):
-        super(HBaseContext, self).__init__()
-        self.setName('beeno')
-
-        if self.conf.get('test.build.data') is None:
-            self.conf.set('test.build.data', '/tmp/beeno')
+from dbtest.hbase import HBaseContext
 
 hc = HBaseContext()
 

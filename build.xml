@@ -82,8 +82,6 @@
 	  </fileset>
 	  <fileset dir="${test.jysrc.dir}" id="tests.jython">
 		<include name="**/test_*.py" />
-		<!-- BUSTED: environment -->
-		<exclude name="**/test_query.py" />
 	  </fileset>
 	</pathconvert>
   </target>
