@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="test/java"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/hadoop-0.20.1-hdfs127-core.jar"/>
+	<classpathentry kind="lib" path="lib/hbase-0.20.1-hbase1949.jar"/>
+	<classpathentry kind="lib" path="lib/hbase-0.20.1-test.jar"/>
+	<classpathentry kind="lib" path="lib/zookeeper-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/guice-2.0.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>
