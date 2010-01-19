@@ -111,7 +111,7 @@ public class IOUtil {
 		return (in.readBoolean() ? null : new Date(in.readLong()));
 	}
 
-	public static Object readEnum( ObjectInput in, Class enumType ) throws IOException {
+	public static <T extends Enum<T>> T readEnum( ObjectInput in, Class<T> enumType ) throws IOException {
 		String enumName = readString(in);
 		if (enumName == null)
 			return null;
