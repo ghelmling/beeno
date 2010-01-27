@@ -3,7 +3,7 @@
   <property environment="env"/>
 
   <property name="project.title" value="Meetup Beeno" />
-  <property name="project.version" value="0.1" />
+  <property name="project.version" value="0.2-dev" />
   <property name="build.dir" value="${basedir}/build" />
   <property name="build.test" value="${basedir}/build/test" />
   <property name="dist.dir" value="${basedir}/dist" />
