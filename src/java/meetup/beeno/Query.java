@@ -3,6 +3,9 @@ package meetup.beeno;
 import java.util.ArrayList;
 import java.util.List;
 
+import meetup.beeno.mapping.EntityInfo;
+import meetup.beeno.mapping.EntityMetadata;
+
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.filter.Filter;
@@ -21,8 +24,10 @@ import org.apache.log4j.Logger;
 public class Query<T> {
 	public static Logger log = Logger.getLogger(Query.class);
 	
-	protected EntityMetadata.EntityInfo entityInfo = null;
+	protected EntityInfo entityInfo = null;
 	protected QueryOpts opts = null;
+	protected Criteria criteria = new Criteria();
+	protected Criteria indexCriteria = new Criteria();
 	protected EntityService<T> service = null;
 	
 	public Query(EntityService<T> service, Class<? extends T> entityClass) throws MappingException {
@@ -46,15 +51,25 @@ public class Query<T> {
 		this.opts = opts;
 	}
 	
-	public Query<T> add(Criteria.Expression expression) {
-		this.opts.addCriteria(expression);
+	public Query<T> where(Criteria.Expression expression) {
+		this.criteria.add(expression);
+		return this;
+	}
+	
+	/**
+	 * Specifies an indexed expression to use for the query
+	 * @return
+	 * @throws HBaseException
+	 */
+	public Query<T> using(Criteria.Expression expression) {
+		this.indexCriteria.add(expression);
 		return this;
 	}
 	
 	public List<T> execute() throws HBaseException {
 		long t1 = System.nanoTime();
 		List<T> entities = new ArrayList<T>();
-		FilterList baseFilter = getCriteriaFilter(this.opts.getCriteria().getExpressions());
+		FilterList baseFilter = getCriteriaFilter(this.criteria.getExpressions());
 		
 		ResultScanner scanner = null;
 		int processCnt = 0;
@@ -101,7 +116,7 @@ public class Query<T> {
 	
 	protected QueryStrategy getStrategy() {
 		QueryStrategy strat = null;
-		if (this.opts.shouldUseIndex())
+		if (this.opts.shouldUseIndex() && !this.indexCriteria.isEmpty())
 			strat = new ScanByIndex();
 		else
 			strat = new ScanNoIndex();

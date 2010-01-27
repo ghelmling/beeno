@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import meetup.beeno.mapping.EntityInfo;
+import meetup.beeno.mapping.IndexMapping;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
@@ -34,7 +36,7 @@ public class ScanByIndex implements QueryStrategy {
 	 * @see com.meetup.db.hbase.QueryStrategy#createScanner(com.meetup.db.hbase.EntityMetadata.EntityInfo, org.apache.hadoop.hbase.filter.RowFilterInterface)
 	 */
 	@Override
-	public ResultScanner createScanner( EntityMetadata.EntityInfo info, QueryOpts opts, Filter baseFilter )
+	public ResultScanner createScanner( EntityInfo info, QueryOpts opts, Filter baseFilter )
 			throws QueryException {
 		
 		ResultScanner scanner = null;
@@ -47,7 +49,7 @@ public class ScanByIndex implements QueryStrategy {
 				Criteria.PropertyExpression indexedExpr = selectIndexedExpression(info, opts.getCriteria().getExpressions());
 				if (indexedExpr != null) {
 					log.debug("Using indexed expression: "+indexedExpr);
-					EntityMetadata.IndexMapping idx = info.getFirstPropertyIndex(indexedExpr.getProperty());
+					IndexMapping idx = info.getFirstPropertyIndex(indexedExpr.getProperty());
 					if (idx != null)
 						log.debug("Using index table: "+idx.getTableName());
 				
@@ -130,7 +132,7 @@ public class ScanByIndex implements QueryStrategy {
 	 * @param expressions
 	 * @return
 	 */
-	protected Criteria.PropertyExpression selectIndexedExpression(EntityMetadata.EntityInfo info, 
+	protected Criteria.PropertyExpression selectIndexedExpression(EntityInfo info, 
 																  List<Criteria.Expression> expressions) {
 		// first look for a direct match expression
 		for (Criteria.Expression e : expressions) {
@@ -162,7 +164,7 @@ public class ScanByIndex implements QueryStrategy {
 	}
 	
 	
-	protected byte[] getStartRow(QueryOpts opts, Criteria.PropertyExpression expr, EntityMetadata.IndexMapping idx) throws HBaseException {
+	protected byte[] getStartRow(QueryOpts opts, Criteria.PropertyExpression expr, IndexMapping idx) throws HBaseException {
 		if (opts.getStartKey() != null) {
 			return opts.getStartKey();
 		}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import meetup.beeno.mapping.IndexMapping;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
@@ -42,7 +43,7 @@ public class EntityIndexer {
 	private boolean invertDate = false;
 	private List<HUtil.HCol> extraFields;
 
-	public EntityIndexer(EntityMetadata.IndexMapping mapping) {
+	public EntityIndexer(IndexMapping mapping) {
 		this.indexTable = mapping.getTableName();
 		this.primaryField = new HUtil.HCol(mapping.getPrimaryField().getFamily(),
 										   mapping.getPrimaryField().getColumn());

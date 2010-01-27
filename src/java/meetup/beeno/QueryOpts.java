@@ -19,7 +19,6 @@ public class QueryOpts implements Externalizable {
 	private Long startTime = null;
 	private int pageSize = DEFAULT_PAGE_SIZE;
 	private boolean useIndex = true;
-	private Criteria criteria = new Criteria();
 	
 	public QueryOpts() {}
 	
@@ -56,13 +55,6 @@ public class QueryOpts implements Externalizable {
 	public int getPageSize() { return this.pageSize; }
 	public void setPageSize(int size) { this.pageSize = size; }
 
-	public Criteria getCriteria() { return this.criteria; }
-	public void setCriteria(Criteria criteria) { this.criteria = criteria; }
-	
-	public void addCriteria(Criteria.Expression expression) {
-		this.criteria.add(expression);
-	}
-
 	@Override
 	public void readExternal( ObjectInput in ) throws IOException,
 			ClassNotFoundException {
@@ -77,7 +69,6 @@ public class QueryOpts implements Externalizable {
 		startTime = IOUtil.readLong(in);
 		pageSize = in.readInt();
 		useIndex = in.readBoolean();
-		criteria = (in.readBoolean() ? null : (Criteria)in.readObject());		
 	}
 
 	@Override
@@ -90,7 +81,6 @@ public class QueryOpts implements Externalizable {
 		IOUtil.writeNullable(out, this.startTime);
 		out.writeInt(this.pageSize);
 		out.writeBoolean(this.useIndex);
-		IOUtil.writeNullable(out, this.criteria);
 	}
 
 }

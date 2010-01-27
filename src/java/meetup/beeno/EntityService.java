@@ -14,6 +14,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import meetup.beeno.mapping.EntityInfo;
+import meetup.beeno.mapping.EntityMetadata;
+import meetup.beeno.mapping.FieldMapping;
+import meetup.beeno.mapping.IndexMapping;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
@@ -58,7 +62,7 @@ public class EntityService<T> {
 	}
 	
 	protected Class<T> clazz;
-	private EntityMetadata.EntityInfo defaultInfo;
+	private EntityInfo defaultInfo;
 	
 	/**
 	 * Crappy duplication of class parameter to work around type erasure.
@@ -73,7 +77,7 @@ public class EntityService<T> {
 	 * instantiated so we don't block on HTable operations (to scan metadata) 
 	 * unnecessarily.
 	 */
-	protected EntityMetadata.EntityInfo getInfo() throws MappingException {
+	protected EntityInfo getInfo() throws MappingException {
 		if (this.defaultInfo == null) {
 			this.defaultInfo = EntityMetadata.getInstance().getInfo(this.clazz);
 		}
@@ -89,7 +93,7 @@ public class EntityService<T> {
 	 */
 	public T get(String rowKey) throws HBaseException {
 		T entity = null;
-		EntityMetadata.EntityInfo info = getInfo();
+		EntityInfo info = getInfo();
 		HTable table = null;
 		try {
 			table = HUtil.getTable( info.getTablename() );
@@ -160,7 +164,7 @@ public class EntityService<T> {
 	 */
 	public void populate(T entity, Result res) throws HBaseException {
 		// set the row key
-		EntityMetadata.EntityInfo info = EntityMetadata.getInstance().getInfo(entity.getClass());
+		EntityInfo info = EntityMetadata.getInstance().getInfo(entity.getClass());
 		PropertyDescriptor keyProp = info.getKeyProperty();
 		writeProperty(entity, keyProp, res.getRow(), false);
 		
@@ -261,7 +265,7 @@ public class EntityService<T> {
 	 */
 	public void save(T entity) throws HBaseException {
 		Put update = getUpdateForEntity(entity);
-		EntityMetadata.EntityInfo info = EntityMetadata.getInstance().getInfo(entity.getClass());
+		EntityInfo info = EntityMetadata.getInstance().getInfo(entity.getClass());
 		
 		// commit the update
 		List<Put> puts = new ArrayList<Put>(1);
@@ -279,7 +283,7 @@ public class EntityService<T> {
 	 * @throws HBaseException
 	 */
 	public void delete(String rowKey) throws HBaseException {
-		EntityMetadata.EntityInfo info = getInfo();
+		EntityInfo info = getInfo();
 
 		// commit the update
 		HTable table = null;
@@ -303,7 +307,7 @@ public class EntityService<T> {
 	/**
 	 * Updates any indexes based on entity annotations for the instance
 	 */
-	public void index(Put update, EntityMetadata.EntityInfo info) throws HBaseException {
+	public void index(Put update, EntityInfo info) throws HBaseException {
 		List<Put> uplist = new ArrayList<Put>(1);
 		uplist.add(update);
 		index(uplist, info);
@@ -313,17 +317,17 @@ public class EntityService<T> {
 	/**
 	 * Updates any indexes based on entity annotations for the instance
 	 */
-	public void index(List<Put> updates, EntityMetadata.EntityInfo info) throws HBaseException {
+	public void index(List<Put> updates, EntityInfo info) throws HBaseException {
 		if (updates == null || updates.size() == 0 || info == null) {
 			log.info("Updates or EntityInfo is NULL!");
 			return;
 		}
 		log.info("Calling index for entity "+info.getEntityClass().getName());
 		
-		List<EntityMetadata.IndexMapping> indexes = info.getMappedIndexes();
+		List<IndexMapping> indexes = info.getMappedIndexes();
 		if (indexes != null && indexes.size() > 0) {
 			Map<String,List<Put>> updatesByTable = new HashMap<String,List<Put>>();
-			for (EntityMetadata.IndexMapping idx : indexes) {
+			for (IndexMapping idx : indexes) {
 				
 				EntityIndexer indexer = idx.getGenerator();
 				if (indexer != null) {
@@ -392,7 +396,7 @@ public class EntityService<T> {
 			return;
 		
 		List<Put> updates = new ArrayList<Put>(entities.size());
-		EntityMetadata.EntityInfo info = null;
+		EntityInfo info = null;
 		for (T entity : entities) {
 			if (info == null)
 				info = EntityMetadata.getInstance().getInfo(entity.getClass());
@@ -429,7 +433,7 @@ public class EntityService<T> {
 	
 	protected Put getUpdateForEntity(T entity) throws HBaseException {
 		// get the row key for the update
-		EntityMetadata.EntityInfo entityInfo = EntityMetadata.getInstance().getInfo(entity.getClass());
+		EntityInfo entityInfo = EntityMetadata.getInstance().getInfo(entity.getClass());
 		PropertyDescriptor keyprop = entityInfo.getKeyProperty();
 		// row keys are _not_ encoded as proto bufs
 		byte[] rowKey = readProperty(entity, keyprop, false);
@@ -442,7 +446,7 @@ public class EntityService<T> {
 		Put update = new Put(rowKey);
 		
 		// setup each field
-		for (EntityMetadata.FieldMapping field : entityInfo.getMappedFields()) {
+		for (FieldMapping field : entityInfo.getMappedFields()) {
 			PropertyDescriptor prop = field.getBeanProperty();
 			String fieldname = field.getColumn();
 			// allow multiple values for collections

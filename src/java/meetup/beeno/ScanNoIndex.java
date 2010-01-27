@@ -2,6 +2,7 @@ package meetup.beeno;
 
 import java.io.IOException;
 
+import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.util.HUtil;
 
 import org.apache.hadoop.hbase.client.HTable;
@@ -17,7 +18,7 @@ public class ScanNoIndex implements QueryStrategy {
 	}
 	
 	@Override
-	public ResultScanner createScanner( EntityMetadata.EntityInfo entityInfo, QueryOpts opts, Filter baseFilter )
+	public ResultScanner createScanner( EntityInfo entityInfo, QueryOpts opts, Filter baseFilter )
 			throws QueryException {
 		ResultScanner scanner = null;
 

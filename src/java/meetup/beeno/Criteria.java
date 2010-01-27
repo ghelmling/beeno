@@ -9,6 +9,8 @@ import java.util.List;
 
 import meetup.beeno.filter.ColumnMatchFilter;
 import meetup.beeno.filter.WhileMatchFilter;
+import meetup.beeno.mapping.EntityInfo;
+import meetup.beeno.mapping.FieldMapping;
 import meetup.beeno.util.IOUtil;
 import meetup.beeno.util.PBUtil;
 
@@ -36,6 +38,10 @@ public class Criteria implements Externalizable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return this.expressions.isEmpty();
+	}
+
 	public List<Expression> getExpressions() {
 		return this.expressions;
 	}
@@ -102,7 +108,7 @@ public class Criteria implements Externalizable {
 		public Expression() {
 		}
 		
-		public abstract Filter getFilter(EntityMetadata.EntityInfo info) throws HBaseException;
+		public abstract Filter getFilter(EntityInfo info) throws HBaseException;
 		
 		public String toString() {
 			return "["+this.getClass().getSimpleName()+"]";
@@ -157,8 +163,8 @@ public class Criteria implements Externalizable {
 			this.op = op;
 		}
 		
-		public Filter getFilter(EntityMetadata.EntityInfo entityInfo) throws HBaseException {
-			EntityMetadata.FieldMapping mapping = entityInfo.getPropertyMapping(this.property);
+		public Filter getFilter(EntityInfo entityInfo) throws HBaseException {
+			FieldMapping mapping = entityInfo.getPropertyMapping(this.property);
 			if (mapping == null) {
 				throw new MappingException( entityInfo.getEntityClass(),
 											String.format("No mapping for criteria!  class=%s, property=%s", 
@@ -190,7 +196,7 @@ public class Criteria implements Externalizable {
 			this.required = required;
 		}
 		
-		public Filter getFilter(EntityMetadata.EntityInfo entityInfo) throws HBaseException {
+		public Filter getFilter(EntityInfo entityInfo) throws HBaseException {
 			if (log.isDebugEnabled())
 				log.debug(String.format("Adding filter: WhileMatchFilter for expr %s", this.required.toString()));
 			
@@ -233,7 +239,7 @@ public class Criteria implements Externalizable {
 				this.oper = FilterList.Operator.MUST_PASS_ONE;
 		}
 		
-		public Filter getFilter(EntityMetadata.EntityInfo entityInfo) throws HBaseException {
+		public Filter getFilter(EntityInfo entityInfo) throws HBaseException {
 			FilterList newFilter = new FilterList(this.oper, new ArrayList<Filter>());
 			for (Expression expr : this.subconditions) {
 				newFilter.addFilter(expr.getFilter(entityInfo));

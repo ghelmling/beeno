@@ -3,6 +3,8 @@
  */
 package meetup.beeno;
 
+import meetup.beeno.mapping.EntityInfo;
+
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.filter.Filter;
 
@@ -12,7 +14,7 @@ import org.apache.hadoop.hbase.filter.Filter;
  */
 public interface QueryStrategy {
 
-	ResultScanner createScanner(EntityMetadata.EntityInfo info, QueryOpts opts, Filter baseFilter) 
+	ResultScanner createScanner(EntityInfo info, QueryOpts opts, Filter baseFilter) 
 		throws QueryException;
 	
 }

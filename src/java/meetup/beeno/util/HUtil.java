@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import meetup.beeno.EntityMetadata;
+import meetup.beeno.mapping.EntityInfo;
+import meetup.beeno.mapping.FieldMapping;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;
@@ -174,9 +175,9 @@ public class HUtil {
 	}
 	
 	
-	public static String[] getMappedFamilies(EntityMetadata.EntityInfo info) {
+	public static String[] getMappedFamilies(EntityInfo info) {
 		Set<String> families = new HashSet<String>();
-		for (EntityMetadata.FieldMapping field : info.getMappedFields()) {
+		for (FieldMapping field : info.getMappedFields()) {
 			families.add(field.getFamily()+":");
 		}
 		
