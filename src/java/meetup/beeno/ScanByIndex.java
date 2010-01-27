@@ -31,12 +31,24 @@ import org.apache.log4j.Logger;
  */
 public class ScanByIndex implements QueryStrategy {
 	private static Logger log = Logger.getLogger(ScanByIndex.class);
+	
+	private final EntityInfo info;
+	private final QueryOpts opts;
+	private final Criteria indexConditions;
+	private final Filter baseFilter;
+	
+	public ScanByIndex( EntityInfo info, QueryOpts opts, Criteria indexConditions, Filter baseFilter ) {
+		this.info = info;
+		this.opts = opts;
+		this.indexConditions = indexConditions;
+		this.baseFilter = baseFilter;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.meetup.db.hbase.QueryStrategy#createScanner(com.meetup.db.hbase.EntityMetadata.EntityInfo, org.apache.hadoop.hbase.filter.RowFilterInterface)
 	 */
 	@Override
-	public ResultScanner createScanner( EntityInfo info, QueryOpts opts, Filter baseFilter )
+	public ResultScanner createScanner()
 			throws QueryException {
 		
 		ResultScanner scanner = null;
@@ -46,7 +58,7 @@ public class ScanByIndex implements QueryStrategy {
 			
 			try {
 				table = HUtil.getTable(info.getTablename());
-				Criteria.PropertyExpression indexedExpr = selectIndexedExpression(info, opts.getCriteria().getExpressions());
+				Criteria.PropertyExpression indexedExpr = selectIndexedExpression(info, indexConditions.getExpressions());
 				if (indexedExpr != null) {
 					log.debug("Using indexed expression: "+indexedExpr);
 					IndexMapping idx = info.getFirstPropertyIndex(indexedExpr.getProperty());

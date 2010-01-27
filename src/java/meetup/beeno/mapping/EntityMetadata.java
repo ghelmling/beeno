@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import meetup.beeno.HBaseEntity;
 import meetup.beeno.HProperty;
 import meetup.beeno.HRowKey;
-import meetup.beeno.MappingException;
 
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.HTablePool;

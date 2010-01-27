@@ -1,4 +1,6 @@
-package meetup.beeno;
+package meetup.beeno.mapping;
+
+import meetup.beeno.HBaseException;
 
 public class MappingException extends HBaseException {
 

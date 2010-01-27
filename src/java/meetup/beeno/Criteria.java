@@ -11,6 +11,7 @@ import meetup.beeno.filter.ColumnMatchFilter;
 import meetup.beeno.filter.WhileMatchFilter;
 import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.mapping.FieldMapping;
+import meetup.beeno.mapping.MappingException;
 import meetup.beeno.util.IOUtil;
 import meetup.beeno.util.PBUtil;
 

@@ -8,9 +8,10 @@ import java.lang
 
 import db.hbase
 from org.apache.hadoop.hbase.client import HTablePool
-from meetup.beeno import EntityMetadata, EntityService, Query, Criteria, HBaseException
+from meetup.beeno import EntityService, Query, Criteria, HBaseException
 from meetup.beeno.util import HUtil
 from meetup.beeno import TestEntities
+from meetup.beeno.mapping import EntityMetadata
 from dbtest.hbase import HBaseContext
 
 hc = HBaseContext()

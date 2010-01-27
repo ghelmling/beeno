@@ -14,7 +14,6 @@ import org.apache.hadoop.hbase.filter.Filter;
  */
 public interface QueryStrategy {
 
-	ResultScanner createScanner(EntityInfo info, QueryOpts opts, Filter baseFilter) 
-		throws QueryException;
+	ResultScanner createScanner() throws QueryException;
 	
 }

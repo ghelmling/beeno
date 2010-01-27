@@ -4,8 +4,9 @@
 
 from jyunit.util import *
 
-from meetup.beeno import EntityMetadata, HBaseException, MappingException
+from meetup.beeno import HBaseException
 from meetup.beeno import TestEntities
+from meetup.beeno.mapping import EntityMetadata, MappingException
 
 import java.lang
 

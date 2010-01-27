@@ -14,18 +14,24 @@ import org.apache.log4j.Logger;
 public class ScanNoIndex implements QueryStrategy {
 	private static Logger log = Logger.getLogger(ScanNoIndex.class);
 	
-	public ScanNoIndex() {
+	private final EntityInfo info;
+	private final QueryOpts opts;
+	private final Filter baseFilter;
+	
+	public ScanNoIndex( EntityInfo entityInfo, QueryOpts opts, Filter baseFilter ) {
+		this.info = entityInfo;
+		this.opts = opts;
+		this.baseFilter = baseFilter;
 	}
 	
 	@Override
-	public ResultScanner createScanner( EntityInfo entityInfo, QueryOpts opts, Filter baseFilter )
-			throws QueryException {
+	public ResultScanner createScanner() throws QueryException {
 		ResultScanner scanner = null;
 
 		Scan scan = new Scan();
 		HTable table = null;
 		try {
-			table = HUtil.getTable(entityInfo.getTablename());
+			table = HUtil.getTable(info.getTablename());
 	
 			scan.setFilter(baseFilter);
 			log.debug("Using filter: "+baseFilter);

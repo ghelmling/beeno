@@ -5,6 +5,7 @@ import java.util.List;
 
 import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.mapping.EntityMetadata;
+import meetup.beeno.mapping.MappingException;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -74,19 +75,9 @@ public class Query<T> {
 		ResultScanner scanner = null;
 		int processCnt = 0;
 		try {
-			scanner = getStrategy().createScanner(this.entityInfo, this.opts, baseFilter);
+			scanner = getStrategy(baseFilter).createScanner();
 			for (Result res : scanner) {
 				processCnt++;
-				// re-apply the basic criteria filter to exclude the start row, if it doesn't
-				// match but was allowed for indexing purposes
-				// FIXME: GH - hack to work around secondary index filtering issues
-				/*
-				if (baseFilter.filterRowKey(res.getRow()) || baseFilter.filterRow(res)) {
-					if (log.isDebugEnabled()) 
-						log.debug("Skipping row: "+Bytes.toString(res.getRow()));
-					continue;
-				}
-				*/
 				T entity = this.service.createFromRow(res);
 				if (entity != null)
 					entities.add( entity );
@@ -114,12 +105,12 @@ public class Query<T> {
 		return null;
 	}
 	
-	protected QueryStrategy getStrategy() {
+	protected QueryStrategy getStrategy(Filter baseFilter) {
 		QueryStrategy strat = null;
 		if (this.opts.shouldUseIndex() && !this.indexCriteria.isEmpty())
-			strat = new ScanByIndex();
+			strat = new ScanByIndex(this.entityInfo, this.opts, this.indexCriteria, baseFilter);
 		else
-			strat = new ScanNoIndex();
+			strat = new ScanNoIndex(this.entityInfo, this.opts, baseFilter);
 		
 		log.debug("Using strategy impl.: "+strat.getClass().getSimpleName());
 		return strat;

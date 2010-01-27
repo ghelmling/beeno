@@ -18,6 +18,7 @@ import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.mapping.EntityMetadata;
 import meetup.beeno.mapping.FieldMapping;
 import meetup.beeno.mapping.IndexMapping;
+import meetup.beeno.mapping.MappingException;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 

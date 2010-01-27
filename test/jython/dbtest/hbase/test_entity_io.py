@@ -7,8 +7,9 @@ from jyunit.util import *
 import java.lang
 from java.util import ArrayList, HashSet, HashMap
 from org.apache.hadoop.hbase.client import HTablePool
-from meetup.beeno import EntityMetadata, EntityService, HBaseException, MappingException
+from meetup.beeno import EntityService, HBaseException
 from meetup.beeno import TestEntities
+from meetup.beeno.mapping import EntityMetadata, MappingException
 from meetup.beeno.util import HUtil
 from dbtest.hbase import HBaseContext
 
