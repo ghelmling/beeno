@@ -18,7 +18,6 @@ public class QueryOpts implements Externalizable {
 	private byte[] startKey = null;
 	private Long startTime = null;
 	private int pageSize = DEFAULT_PAGE_SIZE;
-	private boolean useIndex = true;
 	
 	public QueryOpts() {}
 	
@@ -26,7 +25,6 @@ public class QueryOpts implements Externalizable {
 		this.startKey = toCopy.startKey;
 		this.pageSize = toCopy.pageSize;
 		this.startTime = toCopy.startTime;
-		this.useIndex = toCopy.useIndex;
 	}
 	
 	public byte[] getStartKey() { return this.startKey; }
@@ -41,14 +39,6 @@ public class QueryOpts implements Externalizable {
 		this.startKey = key;
 	}
 	
-	public boolean shouldUseIndex() {
-		return useIndex;
-	}
-
-	public void setUseIndex( boolean useIndex ) {
-		this.useIndex = useIndex;
-	}
-
 	public Long getStartTime() { return this.startTime; }
 	public void setStartTime(Long time) { this.startTime = time; }
 	
@@ -68,7 +58,6 @@ public class QueryOpts implements Externalizable {
 		}
 		startTime = IOUtil.readLong(in);
 		pageSize = in.readInt();
-		useIndex = in.readBoolean();
 	}
 
 	@Override
@@ -80,7 +69,6 @@ public class QueryOpts implements Externalizable {
 		}
 		IOUtil.writeNullable(out, this.startTime);
 		out.writeInt(this.pageSize);
-		out.writeBoolean(this.useIndex);
 	}
 
 }

@@ -125,7 +125,7 @@ public class Query<T> {
 	
 	protected QueryStrategy getStrategy(FilterList baseFilter) {
 		QueryStrategy strat = null;
-		if (this.opts.shouldUseIndex() && !this.indexCriteria.isEmpty())
+		if (!this.indexCriteria.isEmpty())
 			strat = new ScanByIndex(this.entityInfo, this.opts, this.indexCriteria, baseFilter);
 		else
 			strat = new ScanNoIndex(this.entityInfo, this.opts, baseFilter);
