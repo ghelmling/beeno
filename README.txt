@@ -199,23 +199,18 @@ Some query examples from the feeds implementation.
 Find all items related to a discussion::
 
     FeedItemService service = new FeedItemService(DiscussionItem.class);
-    QueryOpts opts = new QueryOpts();
-    opts.setPageSize(-1); // all items
     Query query =
-        service.query(DiscussionItem.class, opts)
-               .add( Criteria.require(
-                            Criteria.eq("threadId", threadId) ) );
+        service.query(DiscussionItem.class)
+               .using( Criteria.eq("threadId", threadId) );
     List items = query.execute();
 
 
-Find all greetings from a given member::
+Find first 5 greetings from a given member::
 
     FeedItemService service = new FeedItemService();
-    QueryOpts opts = new QueryOpts();
-    opts.setPageSize(-1); // all items
     Query query = 
         service.query(opts)
-               .add( Criteria.require( 
-                       Criteria.eq("memberId", memberId) ) )
-               .add( Criteria.eq(“itemType”, “chapter_greeting”) );
+               .using( Criteria.eq("memberId", memberId) )
+               .where( Criteria.eq(“itemType”, “chapter_greeting”) )
+			   .limit( 5 );
     List items = query.execute();

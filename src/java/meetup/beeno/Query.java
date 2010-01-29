@@ -85,6 +85,16 @@ public class Query<T> {
 		return this;
 	}
 	
+	/**
+	 * Sets the maximum number of items to retrieve
+	 * @return
+	 * @throws HBaseException
+	 */
+	public Query<T> limit(int size) {
+		this.opts.setPageSize(size);
+		return this;
+	}
+
 	public List<T> execute() throws HBaseException {
 		long t1 = System.nanoTime();
 		List<T> entities = new ArrayList<T>();
