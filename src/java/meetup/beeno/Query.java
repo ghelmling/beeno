@@ -66,6 +66,15 @@ public class Query<T> {
 	}
 
 	/**
+	 * Sets the timestamp portion to use in constructing 
+	 * start keys for scanners
+	 */
+	public Query<T> startTime(Long time) {
+		this.opts.setStartTime(time);
+		return this;
+	}
+
+	/**
 	 * Defines an expression to be used in filtering query results
 	 * @param expression
 	 * @return
