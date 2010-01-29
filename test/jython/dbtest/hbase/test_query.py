@@ -60,8 +60,9 @@ def query_by_string():
     srv = EntityService(TestEntities.IndexedEntity)
     # test indexing of a value with multiple entries
     q = srv.query()
-    q.add( Criteria.require( Criteria.eq( "stringProperty", java.lang.String('duck') ) ) )
+    q.using( Criteria.eq( "stringProperty", java.lang.String('duck') ) )
     matches = q.execute()
+
     assertEquals( len(matches), 3 )
     assertEquals( matches[0].getId(), 'e1' )
     assertEquals( matches[0].getStringProperty(), 'duck' )
@@ -71,7 +72,7 @@ def query_by_string():
     assertEquals( matches[2].getStringProperty(), 'duck' )
 
     q = srv.query()
-    q.add( Criteria.require( Criteria.eq( "stringProperty", java.lang.String('goose') ) ) )
+    q.using( Criteria.eq( "stringProperty", java.lang.String('goose') ) )
     matches = q.execute()
     assertEquals( len(matches), 1 )
     assertEquals( matches[0].getId(), 'e4' )
@@ -82,7 +83,7 @@ def query_by_int():
     srv = EntityService(TestEntities.IndexedEntity)
     # test indexing of integer values
     q = srv.query()
-    q.add( Criteria.require( Criteria.eq( "intKey",	java.lang.Integer(2) ) ) )
+    q.using( Criteria.eq( "intKey", java.lang.Integer(2) ) )
     matches = q.execute()
     assertEquals( len(matches), 3 )
     assertEquals( matches[0].getId(), 'e4', "Indexed entries should be in reverse timestamp order" )
@@ -93,7 +94,7 @@ def query_by_int():
     assertEquals( matches[2].getIntKey(), 2 )
 
     q = srv.query()
-    q.add( Criteria.require( Criteria.eq( "intKey", java.lang.Integer(1) ) ) )
+    q.using( Criteria.eq( "intKey", java.lang.Integer(1) ) )
     matches = q.execute()
     assertEquals( len(matches), 1 )
     assertEquals( matches[0].getId(), 'e1' )

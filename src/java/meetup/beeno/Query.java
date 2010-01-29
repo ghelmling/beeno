@@ -32,16 +32,9 @@ public class Query<T> {
 	protected EntityService<T> service = null;
 	
 	public Query(EntityService<T> service, Class<? extends T> entityClass) throws MappingException {
-		this(service, entityClass, null);
-	}
-
-	public Query(EntityService<T> service, Class<? extends T> entityClass, QueryOpts opts) 
-		throws MappingException {
 		this.service = service;
 		this.entityInfo = EntityMetadata.getInstance().getInfo(entityClass);
-		this.opts = opts;
-		if (this.opts == null)
-			this.opts = new QueryOpts();
+		this.opts = new QueryOpts();
 	}
 	
 	public QueryOpts getOptions() {
@@ -52,6 +45,31 @@ public class Query<T> {
 		this.opts = opts;
 	}
 	
+	/**
+	 * Sets the start key used for the query
+	 * @param expression
+	 * @return
+	 */
+	public Query<T> start(String key) {
+		this.opts.setStartKey(key);
+		return this;
+	}
+	
+	/**
+	 * Sets the start key used for the query
+	 * @param expression
+	 * @return
+	 */
+	public Query<T> start(byte[] keybytes) {
+		this.opts.setStartKey(keybytes);
+		return this;
+	}
+
+	/**
+	 * Defines an expression to be used in filtering query results
+	 * @param expression
+	 * @return
+	 */
 	public Query<T> where(Criteria.Expression expression) {
 		this.criteria.add(expression);
 		return this;
@@ -105,7 +123,7 @@ public class Query<T> {
 		return null;
 	}
 	
-	protected QueryStrategy getStrategy(Filter baseFilter) {
+	protected QueryStrategy getStrategy(FilterList baseFilter) {
 		QueryStrategy strat = null;
 		if (this.opts.shouldUseIndex() && !this.indexCriteria.isEmpty())
 			strat = new ScanByIndex(this.entityInfo, this.opts, this.indexCriteria, baseFilter);

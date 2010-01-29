@@ -234,7 +234,7 @@ public class EntityService<T> {
 	 * @throws MappingException
 	 */
 	public Query<T> query() throws MappingException {
-		return query(this.clazz, null);
+		return query(this.clazz);
 	}
 	
 	/**
@@ -243,18 +243,8 @@ public class EntityService<T> {
 	 * @return
 	 * @throws MappingException
 	 */
-	public Query<T> query(QueryOpts opts) throws MappingException {
-		return query(this.clazz, opts);
-	}
-
-	/**
-	 * Constructs a new query instance for this entity type to create criteria queries
-	 * 
-	 * @return
-	 * @throws MappingException
-	 */
-	public Query<T> query(Class<? extends T> entityClass, QueryOpts opts) throws MappingException {
-		Query query = new Query(this, entityClass, opts);
+	public Query<T> query(Class<? extends T> entityClass) throws MappingException {
+		Query query = new Query(this, entityClass);
 		
 		return query;
 	}

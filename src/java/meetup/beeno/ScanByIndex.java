@@ -35,9 +35,9 @@ public class ScanByIndex implements QueryStrategy {
 	private final EntityInfo info;
 	private final QueryOpts opts;
 	private final Criteria indexConditions;
-	private final Filter baseFilter;
+	private final FilterList baseFilter;
 	
-	public ScanByIndex( EntityInfo info, QueryOpts opts, Criteria indexConditions, Filter baseFilter ) {
+	public ScanByIndex( EntityInfo info, QueryOpts opts, Criteria indexConditions, FilterList baseFilter ) {
 		this.info = info;
 		this.opts = opts;
 		this.indexConditions = indexConditions;
@@ -61,11 +61,13 @@ public class ScanByIndex implements QueryStrategy {
 				Criteria.PropertyExpression indexedExpr = selectIndexedExpression(info, indexConditions.getExpressions());
 				if (indexedExpr != null) {
 					log.debug("Using indexed expression: "+indexedExpr);
+					// add on while match filter for exit at end of index value
+					baseFilter.addFilter( Criteria.require(indexedExpr).getFilter(info) );
 					IndexMapping idx = info.getFirstPropertyIndex(indexedExpr.getProperty());
 					if (idx != null)
 						log.debug("Using index table: "+idx.getTableName());
 				
-					byte[] startrow = getStartRow(opts, indexedExpr, idx);			
+					byte[] startrow = getStartRow(opts, indexedExpr, idx);
 					//RowFilterInterface filter = addIndexFilters(baseFilter, startrow);
 					log.debug("Using filter: "+baseFilter);
 				

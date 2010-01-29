@@ -218,5 +218,11 @@ public class TestEntities {
 		@HProperty(family="props", name="tscol")
 		public long getTimestamp() { return timestamp; }
 		public void setTimestamp( long ts ) { this.timestamp = ts; }
+		
+		public String toString() {
+			return String.format("[%s: id=%s; stringcol=%s; intcol=%d; tscol=%d]",
+					this.getClass().getSimpleName(), this.id, this.stringProperty, 
+					this.intKey, this.timestamp);
+		}
 	}
 }

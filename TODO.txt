@@ -18,3 +18,23 @@
 
 * For query scanning of secondary index tables, should maybe use row
   prefix filters instead of value filters
+
+1-28-2010:
+
+* Rework the query API
+  * QueryOpts is clumsy.  It shouldn't be exposed as an external
+    object.  Instead, use it internally to consolidate settings, but
+	the query instance should function more as a builder:
+		q = service.query();
+		q.start( startkey )
+		 .where( Criteria.eq( 'prop', value ) )
+		 .where( Criteria.eq( 'prop2', value2 ) )
+		 .end( endkey );
+		q.execute();
+
+    or for an indexed query:
+        q = service.query();
+		q.using( Criteria.eq( 'idxprop', value ) )
+         .where( Criteria.gt( 'prop2', minvalue ) );
+		q.execute();
+    
