@@ -62,6 +62,15 @@ public class EntityService<T> {
 		defaultCollections.put(SortedSet.class, TreeSet.class);
 	}
 	
+	
+	/**
+	 * Factory method for easy instantiation without overly verbose java 
+	 * generics typing.
+	 */
+	public static <T> EntityService<T> create(Class<T> itemType) {
+		return new EntityService<T>(itemType);
+	}
+	
 	protected Class<T> clazz;
 	private EntityInfo defaultInfo;
 	

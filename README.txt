@@ -1,5 +1,5 @@
 =====================
-Meetup.Beeno Overview
+Beeno Overview
 =====================
 
 The native Java API for HBase provides fairly low level access to your
@@ -23,7 +23,7 @@ Sample entity class::
     /**
      * Simple entity class with mapped properties
      */
-    @HBaseEntity(name="test_simple")
+    @HEntity(name="test_simple")
     public static class SimpleEntity {
         String id;
         String stringProperty;
@@ -78,7 +78,7 @@ method-level annotations on methods conforming to JavaBeans property
 conventions.
 
 
-@HBaseEntity( name="*tablename*" )
+@HEntity( name="*tablename*" )
     This class-level annotation defines which HBase table is used to store
     the entity's data.  This is required.
 
@@ -198,18 +198,18 @@ Some query examples from the feeds implementation.
 
 Find all items related to a discussion::
 
-    FeedItemService service = new FeedItemService(DiscussionItem.class);
+    EntityService<DiscussionItem> service = EntityService.create(DiscussionItem.class);
     Query query =
-        service.query(DiscussionItem.class)
+        service.query()
                .using( Criteria.eq("threadId", threadId) );
     List items = query.execute();
 
 
 Find first 5 greetings from a given member::
 
-    FeedItemService service = new FeedItemService();
+    EntityService<GreetingItem> service = EntityService.create(GreetingItem.class);
     Query query = 
-        service.query(opts)
+        service.query()
                .using( Criteria.eq("memberId", memberId) )
                .where( Criteria.eq(“itemType”, “chapter_greeting”) )
 			   .limit( 5 );
