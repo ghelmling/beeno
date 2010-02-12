@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import meetup.beeno.HBaseEntity;
+import meetup.beeno.HEntity;
 import meetup.beeno.HProperty;
 import meetup.beeno.HRowKey;
 
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Central cache for parsed mapping metadata on entity classes.  Given an entity class reference,
- * this will parse out {@link HBaseEntity}. {@link HRowKey}, {@link HProperty} annotations for the class
+ * this will parse out {@link HEntity}. {@link HRowKey}, {@link HProperty} annotations for the class
  * and cache the results for future queries.
  * 
  * @author garyh
@@ -80,7 +80,7 @@ public class EntityMetadata {
 	 */
 	protected EntityInfo parseEntity(Class clazz) throws MappingException {
 		// lookup any class mappings
-		HBaseEntity classTable = (HBaseEntity) clazz.getAnnotation(HBaseEntity.class);
+		HEntity classTable = (HEntity) clazz.getAnnotation(HEntity.class);
 		if (classTable ==  null) {
 			throw new MappingException(clazz, "Not an entity class!");
 		}

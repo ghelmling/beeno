@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import meetup.beeno.HBaseEntity;
+import meetup.beeno.HEntity;
 import meetup.beeno.HIndex;
 import meetup.beeno.HProperty;
 import meetup.beeno.HRowKey;
@@ -25,7 +25,7 @@ public class TestEntities {
 	 * @author garyh
 	 *
 	 */
-	@HBaseEntity(name="test_simple")
+	@HEntity(name="test_simple")
 	public static class SimpleEntity {
 		String id;
 		String stringProperty;
@@ -94,7 +94,7 @@ public class TestEntities {
 	 * More complex entity class containing mapped collections
 	 * @author garyh
 	 */
-	@HBaseEntity(name="test_complex")
+	@HEntity(name="test_complex")
 	public static class ComplexEntity {
 		String id;
 		List<String> stringList = new ArrayList<String>();
@@ -134,7 +134,7 @@ public class TestEntities {
 		}
 	}
 
-	@HBaseEntity(name="test_nokey")
+	@HEntity(name="test_nokey")
 	public static class NoKeyEntity {
 		String prop1;
 
@@ -143,7 +143,7 @@ public class TestEntities {
 		public void setProp1(String prop) { this.prop1 = prop; }
 	}
 
-	@HBaseEntity(name="test_dupekey")
+	@HEntity(name="test_dupekey")
 	public static class DupeKeyEntity {
 		String id1;
 		String id2;
@@ -154,7 +154,7 @@ public class TestEntities {
 		public String getId2() { return this.id2; }
 	}
 
-	@HBaseEntity(name="test_dupefield")
+	@HEntity(name="test_dupefield")
 	public static class DupeFieldEntity {
 		String id;
 		String prop1;
@@ -173,7 +173,7 @@ public class TestEntities {
 	 * @author garyh
 	 *
 	 */
-	@HBaseEntity(name="test_indexed")
+	@HEntity(name="test_indexed")
 	public static class IndexedEntity {
 		String id;
 		String stringProperty;

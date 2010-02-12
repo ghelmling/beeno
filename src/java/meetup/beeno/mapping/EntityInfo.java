@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import meetup.beeno.HBaseEntity;
+import meetup.beeno.HEntity;
 import meetup.beeno.HIndex;
 import meetup.beeno.HProperty;
 import meetup.beeno.HRowKey;
@@ -40,7 +40,7 @@ public class EntityInfo {
 	public Class getEntityClass() { return this.entityClass; }
 	
 	/**
-	 * Returns the HBase table identified by the entity's {@link HBaseEntity} 
+	 * Returns the HBase table identified by the entity's {@link HEntity} 
 	 * annotation.
 	 * @return
 	 */
