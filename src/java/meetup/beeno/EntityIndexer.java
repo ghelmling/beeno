@@ -42,6 +42,7 @@ public class EntityIndexer {
 	private HUtil.HCol dateField;
 	private boolean invertDate = false;
 	private List<HUtil.HCol> extraFields;
+	private IndexKeyFactory keyFactory = new DefaultKeyFactory();
 
 	public EntityIndexer(IndexMapping mapping) {
 		this.indexTable = mapping.getTableName();
@@ -50,6 +51,15 @@ public class EntityIndexer {
 		this.dateField = mapping.getDateField();
 		this.invertDate = mapping.isDateInverted();
 		this.extraFields = mapping.getExtraFields();
+		
+		if (mapping.getKeyFactory() != null) {
+			try {
+				this.keyFactory = mapping.getKeyFactory().newInstance();
+			}
+			catch (Exception e) {
+				throw new IllegalArgumentException("Unable to instantiate key factory class", e);
+			}
+		}
 	}
 	
 	public String getIndexTable() { return this.indexTable; }
@@ -147,30 +157,70 @@ public class EntityIndexer {
 	 * implementations
 	 */
 	public byte[] createIndexKey(byte[] primaryVal, Long date, byte[] origRow) {
-		byte[] key = new byte[0];
-		HDataTypes.HField pbVal = PBUtil.readMessage(primaryVal);
-		// order numeric types
-		if (pbVal != null && pbVal.getType() == HDataTypes.HField.Type.INTEGER) {
-			key = Bytes.add(key, HUtil.toOrderedBytes(pbVal.getInteger()));
+		if (this.dateField != null && date != null) {
+			return this.keyFactory.createKey(primaryVal, origRow, date, this.invertDate);
 		}
 		else {
-			// just use raw bytes
-			key = Bytes.add(key, primaryVal);
+			return this.keyFactory.createKey(primaryVal, origRow, null, this.invertDate);
 		}
+	}
+	
+	
+	public static class DefaultKeyFactory implements IndexKeyFactory {
+
+		@Override
+		public byte[] createKey( byte[] primaryVal, byte[] rowKey, Long date, boolean invertDate ) {
+			byte[] key = new byte[0];
+			HDataTypes.HField pbVal = PBUtil.readMessage(primaryVal);
+			// order numeric types
+			if (pbVal != null && pbVal.getType() == HDataTypes.HField.Type.INTEGER) {
+				key = Bytes.add(key, HUtil.toOrderedBytes(pbVal.getInteger()));
+			}
+			else {
+				// just use raw bytes
+				key = Bytes.add(key, primaryVal);
+			}
+			
+			// add on date, if specified
+			if (date != null) {
+				key = Bytes.add(key, 
+							Bytes.add(ROW_KEY_SEP, HUtil.toOrderedBytes(date, invertDate)) );
+			}
+			
+			// add on the original row key to ensure uniqueness
+			if (rowKey != null && rowKey.length > 0) {
+				key = Bytes.add(key, 
+						Bytes.add(ROW_KEY_SEP, rowKey));
+			}
+			
+			return key;
+		}	
+	}
+	
+	
+	/**
+	 * Generates the same index keys as DefaultKeyFactory, but prefixed with the primary value mod 100 for
+	 * better row key distribution.
+	 * 
+	 * This is designed specifically to avoid hot regions arising from frequently used indexes based off of
+	 * a sequentially incremented primary value.
+	 * @author garyh
+	 *
+	 */
+	public static class ModKeyFactory extends DefaultKeyFactory {
+		private static int base = 100;
 		
-		// add on date, if specified
-		if (this.dateField != null && date != null) {
-			key = Bytes.add(key, 
-						Bytes.add(ROW_KEY_SEP, 
-								  HUtil.toOrderedBytes(date, this.invertDate)) );
+		public byte[] createKey( byte[] primaryVal, byte[] rowKey, Long date, boolean invertDate) {
+			byte[] key = new byte[0];
+			HDataTypes.HField pbVal = PBUtil.readMessage(primaryVal);
+			// order numeric types
+			if (pbVal != null && pbVal.getType() == HDataTypes.HField.Type.INTEGER) {
+				long val = pbVal.getInteger();
+				key = Bytes.add(Bytes.toBytes(Long.toString( val % base )), ROW_KEY_SEP); 
+			}
+			key = Bytes.add(key, super.createKey(primaryVal, rowKey, date, invertDate));
+			
+			return key;
 		}
-		
-		// add on the original row key to ensure uniqueness
-		if (origRow != null && origRow.length > 0) {
-			key = Bytes.add(key, 
-					Bytes.add(ROW_KEY_SEP, origRow));
-		}
-		
-		return key;
-	}	
+	}
 }
