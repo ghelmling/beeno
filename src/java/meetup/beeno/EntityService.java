@@ -18,6 +18,7 @@ import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.mapping.EntityMetadata;
 import meetup.beeno.mapping.FieldMapping;
 import meetup.beeno.mapping.IndexMapping;
+import meetup.beeno.mapping.MapField;
 import meetup.beeno.mapping.MappingException;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
@@ -297,6 +298,64 @@ public class EntityService<T> {
 		}
 		catch (IOException ioe) {
 			throw new HBaseException(String.format("Error deleting row for key '%s'", rowKey), ioe);
+		}
+		finally {
+			HUtil.releaseTable(table);
+		}
+	}
+
+
+	public void deleteProperty(String rowKey, String propertyName)
+			throws HBaseException {
+
+		EntityInfo info = getInfo();
+		FieldMapping field = info.getPropertyMapping(propertyName);
+		if (field == null)
+			throw new IllegalArgumentException( String.format("Unknown property name '%s'", propertyName) );
+
+		// commit the delete
+		HTable table = null;
+		try {
+			table = HUtil.getTable(info.getTablename());
+			Delete op = new Delete( Bytes.toBytes(rowKey) );
+			op.deleteColumn( Bytes.toBytes(field.getFamily()), Bytes.toBytes(field.getColumn()) );
+			table.delete(op);
+
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted column '%s' for row '%s'", field.getFieldName(), rowKey));
+		}
+		catch (IOException ioe) {
+			throw new HBaseException(String.format("Error deleting column '%s' for row '%s'", field.getFieldName(), rowKey));
+		}
+		finally {
+			HUtil.releaseTable(table);
+		}
+	}
+
+
+	public void deleteMapProperty(String rowKey, String propertyName, String mapKey)
+			throws HBaseException {
+
+		EntityInfo info = getInfo();
+		FieldMapping field = info.getPropertyMapping(propertyName);
+		if (field == null)
+			throw new IllegalArgumentException( String.format("Unknown property name '%s'", propertyName) );
+		else if (!(field instanceof MapField))
+			throw new IllegalArgumentException( String.format("Property '%s' is not a Map type", propertyName) );
+
+		String columnName = field.getColumn() + mapKey;
+		HTable table = null;
+		try {
+			table = HUtil.getTable(info.getTablename());
+			Delete op = new Delete( Bytes.toBytes(rowKey) );
+			op.deleteColumn( Bytes.toBytes(field.getFamily()), Bytes.toBytes(columnName) );
+			table.delete(op);
+
+			if (log.isDebugEnabled())
+				log.debug(String.format("Deleted column '%s:%s' for row '%s'", field.getFamily(), columnName, rowKey));
+		}
+		catch (IOException ioe) {
+			throw new HBaseException(String.format("Error deleting column '%s:%s' for row '%s'", field.getFamily(), columnName, rowKey));
 		}
 		finally {
 			HUtil.releaseTable(table);
