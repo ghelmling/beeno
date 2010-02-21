@@ -38,6 +38,8 @@ public class ScanNoIndex implements QueryStrategy {
 
 			if (opts.getStartKey() != null)
 				scan.setStartRow(opts.getStartKey());
+			if (opts.getStopKey() != null)
+				scan.setStopRow(opts.getStopKey());
 			
 		
 			long t1 = System.nanoTime();

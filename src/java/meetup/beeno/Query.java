@@ -75,6 +75,24 @@ public class Query<T> {
 	}
 
 	/**
+	 * Sets the stop row key to be used in the generated <code>Scan</code>
+	 * instance.
+	 */
+	public Query<T> stop(String key) {
+		this.opts.setStopKey(key);
+		return this;
+	}
+
+	/**
+	 * Sets the stop row key to be used in the generated <code>Scan</code>
+	 * instance.
+	 */
+	public Query<T> stop(byte[] key) {
+		this.opts.setStopKey(key);
+		return this;
+	}
+
+	/**
 	 * Defines an expression to be used in filtering query results
 	 * @param expression
 	 * @return

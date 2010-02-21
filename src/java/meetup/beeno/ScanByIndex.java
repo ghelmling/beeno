@@ -73,7 +73,8 @@ public class ScanByIndex implements QueryStrategy {
 				
 					long t1 = System.nanoTime();
 					scanner = getIndexScanner(idx.getTableName(),
-											  startrow, 
+											  startrow,
+											  opts.getStopKey(),
 											  baseFilter, 
 											  table,
 											  null);
@@ -90,6 +91,8 @@ public class ScanByIndex implements QueryStrategy {
 					Scan scan = new Scan();
 					if (startrow != null)
 						scan.setStartRow(startrow);
+					if (opts.getStopKey() != null)
+						scan.setStopRow(opts.getStopKey());
 					if (baseFilter != null)
 						scan.setFilter(baseFilter);
 					scanner = table.getScanner(scan);
@@ -114,6 +117,7 @@ public class ScanByIndex implements QueryStrategy {
 	
 	protected ResultScanner getIndexScanner(String tablename, 
 											byte[] startrow, 
+											byte[] stoprow,
 											Filter filter, 
 											HTable baseTable, 
 											byte[][] families) 
@@ -121,6 +125,8 @@ public class ScanByIndex implements QueryStrategy {
 		
 		Scan idxScan = new Scan();
 		idxScan.setStartRow(startrow);
+		if (stoprow != null)
+			idxScan.setStopRow(stoprow);
 		if (filter != null)
 			idxScan.setFilter(filter);
 		

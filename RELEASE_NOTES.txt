@@ -12,7 +12,7 @@ Focus on API cleanup and better configurability.
 		q.start( startkey )
 		 .where( Criteria.eq( 'prop', value ) )
 		 .where( Criteria.eq( 'prop2', value2 ) )
-		 .end( endkey );
+		 .stop( endkey );
 		q.execute();
 
     or for an indexed query:

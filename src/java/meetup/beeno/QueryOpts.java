@@ -16,6 +16,7 @@ public class QueryOpts implements Externalizable {
 	public static final int DEFAULT_PAGE_SIZE = 50;
 
 	private byte[] startKey = null;
+	private byte[] stopKey = null;
 	private Long startTime = null;
 	private int pageSize = DEFAULT_PAGE_SIZE;
 	
@@ -41,7 +42,17 @@ public class QueryOpts implements Externalizable {
 	
 	public Long getStartTime() { return this.startTime; }
 	public void setStartTime(Long time) { this.startTime = time; }
+
+	public byte[] getStopKey() { return this.stopKey; }
+	public void setStopKey(byte[] key) { this.stopKey = key; }
 	
+	public void setStopKey(String key) {
+		if (key != null)
+			this.stopKey = Bytes.toBytes(key);
+		else
+			this.stopKey = null;
+	}
+
 	public int getPageSize() { return this.pageSize; }
 	public void setPageSize(int size) { this.pageSize = size; }
 
