@@ -1,0 +1,29 @@
+Release 0.2.0:
+===============
+Focus on API cleanup and better configurability.
+
+* Reworked the query API
+  * QueryOpts usage was a bit clumsy, so it is no longer exposed as a 
+    parameter in the query API.  Instead, it's used internally to consolidate 
+	settings, but the query instance functions more as a builder:
+
+	Query with start and end keys:
+		Query q = service.query();
+		q.start( startkey )
+		 .where( Criteria.eq( 'prop', value ) )
+		 .where( Criteria.eq( 'prop2', value2 ) )
+		 .end( endkey );
+		q.execute();
+
+    or for an indexed query:
+        Query q = service.query();
+		q.using( Criteria.eq( 'idxprop', value ) )
+         .where( Criteria.gt( 'prop2', minvalue ) );
+		q.execute();
+    
+
+
+
+Release 0.1.0:
+===============
+Initial code release.
