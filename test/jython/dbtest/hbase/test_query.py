@@ -43,17 +43,19 @@ def teardown():
     try:
         pass
         # clean up the dummy table
-        # import db.hbase
-        # admin = db.hbase.Admin(hc.conf)
+        import db.hbase
+        admin = db.hbase.Admin(hc.conf)
 
-        # if admin.exists("test_indexed"):
-        #     admin.drop("test_indexed")
-        # if admin.exists("test_indexed-by_intcol"):
-        #     admin.drop("test_indexed-by_intcol")
-        # if admin.exists("test_indexed-by_stringcol"):
-        #     admin.drop("test_indexed-by_stringcol")
+        if admin.exists("test_indexed"):
+            admin.drop("test_indexed")
+        if admin.exists("test_indexed-by_intcol"):
+            admin.drop("test_indexed-by_intcol")
+        if admin.exists("test_indexed-by_stringcol"):
+            admin.drop("test_indexed-by_stringcol")
     finally:
         hc.tearDown()
+        # hack to give server time to shutdown
+        java.lang.Thread.sleep(10000)
 
 
 def query_by_string():
@@ -85,6 +87,7 @@ def query_by_int():
     q = srv.query()
     q.using( Criteria.eq( "intKey", java.lang.Integer(2) ) )
     matches = q.execute()
+    print matches
     assertEquals( len(matches), 3 )
     assertEquals( matches[0].getId(), 'e4', "Indexed entries should be in reverse timestamp order" )
     assertEquals( matches[0].getIntKey(), 2 )
@@ -102,13 +105,13 @@ def query_by_int():
 
 
 def run_test():
-    try:
-        setup()
-        query_by_string()
-        query_by_int()
-    finally:
-        teardown()
+    query_by_string()
+    query_by_int()
 
 
 if __name__ == '__main__':
-    run_test()
+    try:
+        setup()
+        run_test()
+    finally:
+        teardown()

@@ -8,3 +8,15 @@ class HBaseContext(HBaseClusterTestCase):
         if self.conf.get('test.build.data') is None:
             self.conf.set('test.build.data', '/tmp/beeno')
 
+        self.running = False
+
+    def setUp(self):
+        if not self.running:
+            self.running = True
+            HBaseClusterTestCase.setUp(self)
+
+
+    def tearDown(self):
+        if self.running:
+            self.running = False
+            HBaseClusterTestCase.tearDown(self)

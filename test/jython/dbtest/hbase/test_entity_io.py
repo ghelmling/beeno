@@ -33,15 +33,17 @@ def teardown():
         import db.hbase
         admin = db.hbase.Admin(hc.conf)
 
-        #if admin.exists("test_simple"):
-        #	admin.disable("test_simple")
-        #	admin.drop("test_simple")
+        if admin.exists("test_simple"):
+            admin.disable("test_simple")
+            admin.drop("test_simple")
 
-        #if admin.exists("test_complex"):
-        #	admin.disable("test_complex")
-        #	admin.drop("test_complex")
+        if admin.exists("test_complex"):
+            admin.disable("test_complex")
+            admin.drop("test_complex")
     finally:
         hc.tearDown()
+        # hack to give server time to shutdown
+        java.lang.Thread.sleep(10000)
 
 
 def save_and_get():

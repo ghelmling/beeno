@@ -88,6 +88,17 @@ public class TestEntities {
 		public void setLongProperty( long longProperty ) {
 			this.longProperty = longProperty;
 		}
+
+		public String toString() {
+			return String.format( "[%s: id=%s, stringProperty=%s, intProperty=%d, floatProperty=%f, doubleProperty=%f, longProperty=%d]",
+								  this.getClass().getSimpleName(),
+								  this.id,
+								  (this.stringProperty == null ? "NULL" : this.stringProperty),
+								  this.intProperty,
+								  this.floatProperty,
+								  this.doubleProperty,
+								  this.longProperty );
+		}
 	}
 
 	/**
@@ -131,6 +142,13 @@ public class TestEntities {
 		}
 		public void setExtendedProps(Map<String,String> props) {
 			this.extendedMap = props;
+		}
+		public String toString() {
+			return String.format( "[%s: id=%s, stringList=%s, intSet=%s, extendedProps=%s]",
+								  this.id,
+								  (this.stringList == null ? "NULL" : this.stringList.toString()),
+								  (this.intSet == null ? "NULL" : this.intSet.toString()),
+								  (this.extendedMap == null ? "NULL" : this.extendedMap.toString()) );
 		}
 	}
 
