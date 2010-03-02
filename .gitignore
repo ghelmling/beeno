@@ -3,3 +3,4 @@ classes/
 dist/
 *.class
 *~
+docs/
