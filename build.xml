@@ -11,6 +11,7 @@
   <property name="src.dir" value="${basedir}/src/java" />
   <property name="test.src.dir" value="${basedir}/test/java" />
   <property name="test.jysrc.dir" value="${basedir}/test/jython" />
+  <property name="docs" value="${basedir}/docs" />
 
   <path id="project.class.path">
     <fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -89,14 +90,15 @@
   <!-- ====================== JavaDoc Generation ================================ -->
 
   <target name="javadoc" description="Generate JavaDoc API docs">
-    <delete>
+    <delete failonerror="false">
       <fileset dir="${docs}" />
     </delete>
-    <javadoc sourcepath="src"
+	<mkdir dir="${docs}" />
+    <javadoc sourcepath="${src.dir}"
              destdir="${docs}"
              packagenames= "meetup.beeno.*"
              author="true"
-             source="1.5"
+             source="1.6"
              private="true"
              version="true"
              defaultexcludes="yes"
