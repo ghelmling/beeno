@@ -10,5 +10,8 @@
 	<classpathentry kind="lib" path="lib/hbase-0.20.1-test.jar"/>
 	<classpathentry kind="lib" path="lib/zookeeper-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/guice-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
