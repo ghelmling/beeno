@@ -66,7 +66,7 @@ public class BasicOrmPersistanceTest {
 
 	// create tables
 	HTableDescriptor by_photoId_idx = new HTableDescriptor(
-		"test_simple-by_photoId");
+	"test_simple-by_photoId");
 	by_photoId_idx.addFamily(new HColumnDescriptor("__idx__"));
 	by_photoId_idx.addFamily(new HColumnDescriptor("props"));
 	admin.createTable(by_photoId_idx);
@@ -94,7 +94,7 @@ public class BasicOrmPersistanceTest {
     public void testCreationAndCriteriaRetrieval() throws HBaseException {
 
 	EntityService<SimpleEntity> service = EntityService
-		.create(SimpleEntity.class);
+	.create(SimpleEntity.class);
 
 	for (int i = 0; i < 10; i++) {
 	    SimpleEntity se = new SimpleEntity();
@@ -106,8 +106,7 @@ public class BasicOrmPersistanceTest {
 	}
 
 	// query rows
-	Query query = service.query().using(
-		Criteria.eq("photoIdProperty", "PHOTOID5"));
+	Query query = service.query().using(Criteria.eq("photoIdProperty", "PHOTOID5"));
 	List<SimpleEntity> items = query.execute();
 	for (SimpleEntity e : items) {
 	    System.out.println("items: " + ((SimpleEntity) e).getId());
@@ -121,13 +120,29 @@ public class BasicOrmPersistanceTest {
 	EntityService<SimpleEntity> service = EntityService.create(SimpleEntity.class);
 
 	// query rows
-	Query query = service.query().using(
-		Criteria.eq("IDONTEXISTFORSURE", "PHOTOID5"));
-	List<SimpleEntity> items = query.execute();
-	for (SimpleEntity e : items) {
-	    System.out.println("items: " + ((SimpleEntity) e).getId());
+	try{
+	    Query query = service.query().using(Criteria.eq("IDONTEXISTFORSURE", "PHOTOID5"));
+	    List<SimpleEntity> items = query.execute();
+	    fail("Should have gotten a QueryException for the missing properties.");
+	} catch(QueryException e){
+	    //Sweet! Got our expected exception.
 	}
-	assertEquals(0, items.size());
     }
+
+    @Test
+    public void testCreationOfMixedExistingAndNonExistantCriteriaRetrieval() throws HBaseException {
+
+	EntityService<SimpleEntity> service = EntityService.create(SimpleEntity.class);
+
+	// query rows
+	try{
+	    Query query = service.query().using(Criteria.eq("IDONTEXISTFORSURE", "PHOTOID5")).where(Criteria.eq("photoIdProperty", "PHOTOID5"));
+	    List<SimpleEntity> items = query.execute();
+	    fail("Should have gotten a QueryException for the missing properties.");
+	} catch(QueryException e){
+	    //Sweet! Got our expected exception.
+	}
+    }
+
 
 }
