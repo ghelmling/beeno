@@ -164,19 +164,8 @@ public class ScanByIndex implements QueryStrategy {
 				PropertyDescriptor prop = info.getProperty(propExpr.getProperty());
 				if (prop != null && info.getFirstPropertyIndex(prop) != null)
 					return propExpr;
-			}
-		}
-		
-		// fall back to the first indexed expression
-		for (Criteria.Expression e : expressions) {
-			if (e instanceof Criteria.RequireExpression)
-				e = ((Criteria.RequireExpression)e).getRequired();
-			
-			if (e instanceof Criteria.PropertyExpression) {
-				Criteria.PropertyExpression propExpr = (Criteria.PropertyExpression)e;
-				PropertyDescriptor prop = info.getProperty(propExpr.getProperty());
-				if (prop != null && info.getFirstPropertyIndex(prop) != null)
-					return propExpr;
+				
+				log.warn("No index found for expression property: "+propExpr.getProperty());
 			}
 		}
 		
