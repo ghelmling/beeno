@@ -11,6 +11,7 @@ import java.util.List;
 
 import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.mapping.IndexMapping;
+import meetup.beeno.mapping.MappingException;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
@@ -151,9 +152,10 @@ public class ScanByIndex implements QueryStrategy {
 	 * for the query.
 	 * @param expressions
 	 * @return
+	 * @throws MappingException 
 	 */
 	protected Criteria.PropertyExpression selectIndexedExpression(EntityInfo info, 
-																  List<Criteria.Expression> expressions) {
+																  List<Criteria.Expression> expressions) throws MappingException {
 		// first look for a direct match expression
 		for (Criteria.Expression e : expressions) {
 			if (e instanceof Criteria.RequireExpression)
@@ -168,8 +170,9 @@ public class ScanByIndex implements QueryStrategy {
 				log.warn("No index found for expression property: "+propExpr.getProperty());
 			}
 		}
-		
-		return null;
+		// not property match found
+		// notifying user to avoid returning wrong result set
+		throw new MappingException(info.getClass(), "Can't find property " + expressions);
 	}
 	
 	

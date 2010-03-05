@@ -9,6 +9,7 @@
   <property name="dist.dir" value="${basedir}/dist" />
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="src.dir" value="${basedir}/src/java" />
+  <property name="docs" value="${basedir}/docs" />
   <property name="test.src.dir" value="${basedir}/test/java" />
   <property name="test.jysrc.dir" value="${basedir}/test/jython" />
   <property name="docs" value="${basedir}/docs" />
@@ -90,20 +91,20 @@
   <!-- ====================== JavaDoc Generation ================================ -->
 
   <target name="javadoc" description="Generate JavaDoc API docs">
-    <delete failonerror="false">
+    <delete quiet="true">
       <fileset dir="${docs}" />
     </delete>
-	<mkdir dir="${docs}" />
+    <mkdir dir="$(docs)" />
     <javadoc sourcepath="${src.dir}"
              destdir="${docs}"
-             packagenames= "meetup.beeno.*"
+             packagenames="meetup.beeno.*"
              author="true"
              source="1.6"
              private="true"
              version="true"
              defaultexcludes="yes"
              use="true"
-             maxmemory = "512m"
+             maxmemory="512m"
              windowtitle="Meetup Beeno API Documentation"
              doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
              bottom="Copyright &#169; 2004 - Meetup Inc">
