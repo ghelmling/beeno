@@ -21,7 +21,9 @@ Focus on API cleanup and better configurability.
          .where( Criteria.gt( 'prop2', minvalue ) );
 		q.execute();
     
+* Fix javadoc build target for generating API documentation [Erich Nachbar]
 
+* Throw meetup.beeno.MappingException on bad property name in criteria for Query.using() [Erich Nachbar]
 
 
 Release 0.1.0:
