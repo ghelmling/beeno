@@ -21,6 +21,7 @@ import java.lang.annotation.Target;
 public @interface HIndex {
 	String date_col() default "";
 	boolean date_invert() default false;
+	boolean date_builtin() default false;
 	String[] extra_cols() default {};
 	Class<? extends IndexKeyFactory> key_factory() default EntityIndexer.DefaultKeyFactory.class;
 }

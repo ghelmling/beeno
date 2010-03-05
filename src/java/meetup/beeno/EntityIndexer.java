@@ -34,6 +34,7 @@ public class EntityIndexer {
 	static final byte[] INDEX_FAMILY = Bytes.toBytes("__idx__");
 	static final byte[] INDEX_KEY_COLUMN = Bytes.toBytes("row");
 	private static final byte[] ROW_KEY_SEP = Bytes.toBytes("-");
+
 	
 	private static Logger log = Logger.getLogger(EntityIndexer.class);
 	
@@ -41,6 +42,8 @@ public class EntityIndexer {
 	private HUtil.HCol primaryField;
 	private HUtil.HCol dateField;
 	private boolean invertDate = false;
+	/** Use the builtin date from HBase versioning in place of a separate column */
+	private boolean useBuiltinDate = false;
 	private List<HUtil.HCol> extraFields;
 	private IndexKeyFactory keyFactory = new DefaultKeyFactory();
 
@@ -50,6 +53,7 @@ public class EntityIndexer {
 										   mapping.getPrimaryField().getColumn());
 		this.dateField = mapping.getDateField();
 		this.invertDate = mapping.isDateInverted();
+		this.useBuiltinDate = mapping.useBuiltinDate();
 		this.extraFields = mapping.getExtraFields();
 		
 		if (mapping.getKeyFactory() != null) {
@@ -94,7 +98,7 @@ public class EntityIndexer {
 		// store all the indexed values
 		byte[] primaryVal = getValue(this.primaryField.family(), this.primaryField.column(), familyMap);
 		if (primaryVal != null && primaryVal.length > 0) {
-			Long date = getDateValue(familyMap);
+			Long date = getDateValue(familyMap, entityUpdate);
 			put = new Put( createIndexKey(primaryVal, date, entityUpdate.getRow()) );
 			
 			// sync with base timestamp
@@ -122,7 +126,7 @@ public class EntityIndexer {
 		return put;
 	}
 	
-	protected Long getDateValue(Map<byte[],List<KeyValue>> familyMap) {
+	protected Long getDateValue(Map<byte[],List<KeyValue>> familyMap, Put entityUpdate) {
 		Long dateVal = null;
 		
 		if (this.dateField != null) {
@@ -132,6 +136,9 @@ public class EntityIndexer {
 			// dates are assumed to be Long!
 			if (pbDate != null && pbDate.getType() == HDataTypes.HField.Type.INTEGER)
 				dateVal = pbDate.getInteger();
+		}
+		else if (this.useBuiltinDate) {
+			dateVal = entityUpdate.getTimeStamp();
 		}
 		
 		return dateVal;
@@ -157,7 +164,7 @@ public class EntityIndexer {
 	 * implementations
 	 */
 	public byte[] createIndexKey(byte[] primaryVal, Long date, byte[] origRow) {
-		if (this.dateField != null && date != null) {
+		if (date != null) {
 			return this.keyFactory.createKey(primaryVal, origRow, date, this.invertDate);
 		}
 		else {

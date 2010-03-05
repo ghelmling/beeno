@@ -243,4 +243,55 @@ public class TestEntities {
 					this.intKey, this.timestamp);
 		}
 	}
+
+
+	/**
+	 * Entity indexed using implicit HBase version timestamps
+	 * instead of an explicit date property.
+	 */
+	@HEntity(name="test_indexed_no_date")
+	public static class NoDateIndexedEntity {
+		String id;
+		String stringProperty;
+		Integer intKey;
+
+		public NoDateIndexedEntity() {
+		}
+
+		public NoDateIndexedEntity(String id) {
+			this.id = id;
+		}
+
+		public NoDateIndexedEntity(String id,
+								   String stringProp,
+								   Integer intKey) {
+			this.id = id;
+			this.stringProperty = stringProp;
+			this.intKey = intKey;
+		}
+
+		@HRowKey
+		public String getId() { return this.id; }
+		public void setId(String id) { this.id = id; }
+
+		@HProperty(family="props", name="stringcol",
+				   indexes = { @HIndex(date_builtin=true) } )
+		public String getStringProperty() { return stringProperty; }
+		public void setStringProperty( String stringProperty ) {
+			this.stringProperty = stringProperty;
+		}
+
+		@HProperty(family="props", name="intcol",
+				   indexes = { @HIndex(date_builtin=true, date_invert=true) } )
+		public Integer getIntKey() { return intKey; }
+		public void setIntKey( Integer val ) {
+			this.intKey = val;
+		}
+
+		public String toString() {
+			return String.format("[%s: id=%s; stringcol=%s; intcol=%d]",
+					this.getClass().getSimpleName(), this.id, this.stringProperty, 
+					this.intKey);
+		}
+	}
 }

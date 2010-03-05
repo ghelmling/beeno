@@ -503,6 +503,8 @@ public class EntityService<T> {
 		}
 		
 		Put update = new Put(rowKey);
+		// explicitly set timestamp
+		update.setTimeStamp(System.currentTimeMillis());
 		
 		// setup each field
 		for (FieldMapping field : entityInfo.getMappedFields()) {

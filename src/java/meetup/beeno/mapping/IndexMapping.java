@@ -19,6 +19,7 @@ public class IndexMapping {
 	protected FieldMapping primaryField;
 	protected HUtil.HCol dateCol;
 	protected boolean invertDate = false;
+	protected boolean builtinDate = false;
 	protected List<HUtil.HCol> extraFields = new ArrayList<HUtil.HCol>();
 	protected EntityIndexer generator;
 	protected Class<? extends IndexKeyFactory> keyFactory;
@@ -35,6 +36,7 @@ public class IndexMapping {
 		if (indexAnnotation.date_col() != null && indexAnnotation.date_col().length() > 0)
 			this.dateCol = HUtil.HCol.parse(indexAnnotation.date_col());
 		this.invertDate = indexAnnotation.date_invert();
+		this.builtinDate = indexAnnotation.date_builtin();
 		this.keyFactory = indexAnnotation.key_factory();
 		
 		this.generator = new EntityIndexer(this);
@@ -44,6 +46,7 @@ public class IndexMapping {
 	public FieldMapping getPrimaryField() { return this.primaryField; }
 	public HUtil.HCol getDateField() { return this.dateCol; }
 	public boolean isDateInverted() { return this.invertDate; }
+	public boolean useBuiltinDate() { return this.builtinDate; }
 	public List<HUtil.HCol> getExtraFields() { return this.extraFields; }
 	public EntityIndexer getGenerator() { return this.generator; }
 	public Class<? extends IndexKeyFactory> getKeyFactory() { return this.keyFactory; }
