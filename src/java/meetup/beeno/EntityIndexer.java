@@ -97,19 +97,19 @@ public class EntityIndexer {
 			Long date = getDateValue(familyMap);
 			put = new Put( createIndexKey(primaryVal, date, entityUpdate.getRow()) );
 			
-			// sync with base timestamp
-			put.setTimeStamp( entityUpdate.getTimeStamp() );
 			// store all specified values (when present)
-			put.add(this.primaryField.family(), this.primaryField.column(), primaryVal);
+			put.add(this.primaryField.family(), this.primaryField.column(),
+          entityUpdate.getTimeStamp(), primaryVal);
 			
 			if (this.dateField != null && date != null)
-				put.add(this.dateField.family(), this.dateField.column(), PBUtil.toBytes(date));
+				put.add(this.dateField.family(), this.dateField.column(),
+            entityUpdate.getTimeStamp(), PBUtil.toBytes(date));
 			
 			// add any extra fields
 			for (HUtil.HCol col : this.extraFields) {
 				byte[] val = getValue(col.family(), col.column(), familyMap);
 				if (val != null)
-					put.add(col.family(), col.column(), val);
+					put.add(col.family(), col.column(), entityUpdate.getTimeStamp(), val);
 			}
 			
 			// store the orig record key

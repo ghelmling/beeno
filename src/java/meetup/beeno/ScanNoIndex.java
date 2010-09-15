@@ -6,6 +6,7 @@ import meetup.beeno.mapping.EntityInfo;
 import meetup.beeno.util.HUtil;
 
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.Filter;
@@ -29,7 +30,7 @@ public class ScanNoIndex implements QueryStrategy {
 		ResultScanner scanner = null;
 
 		Scan scan = new Scan();
-		HTable table = null;
+		HTableInterface table = null;
 		try {
 			table = HUtil.getTable(info.getTablename());
 	

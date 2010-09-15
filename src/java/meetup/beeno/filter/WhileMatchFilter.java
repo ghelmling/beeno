@@ -26,6 +26,7 @@ import org.apache.hadoop.hbase.filter.Filter;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.DataInput;
+import java.util.List;
 
 /**
  * A wrapper filter that filters everything after the first filtered row.
@@ -63,12 +64,25 @@ public class WhileMatchFilter implements Filter {
 		return filter.filterKeyValue(v);
 	}
 
-	public boolean filterRow() {
+  public boolean filterRow() {
 		changeFAR(filter.filterRow());
 		return filterAllRemaining();
 	}
 
-	public void write( DataOutput out ) throws IOException {
+  @Override
+  public void filterRow(List<KeyValue> keyValues) {}
+
+  @Override
+  public boolean hasFilterRow() {
+    return false;
+  }
+
+  @Override
+  public KeyValue getNextKeyHint(KeyValue keyValue) {
+    return null;
+  }
+
+  public void write( DataOutput out ) throws IOException {
 		out.writeUTF(this.filter.getClass().getName());
 		this.filter.write(out);
 	}

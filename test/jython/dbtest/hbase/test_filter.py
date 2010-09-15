@@ -23,7 +23,7 @@ def test_column_eq():
     mismatchval = java.lang.String('secondvalue')
     rowkey1 = Bytes.toBytes( java.lang.String('row1') )
 
-    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1col1), ColumnMatchFilter.CompareOp.EQUAL, PBUtil.toBytes(colval), True)
+    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1), Bytes.toBytes(col1), ColumnMatchFilter.CompareOp.EQUAL, PBUtil.toBytes(colval), True)
 
     row1 = KeyValue(rowkey1, Bytes.toBytes(fam1), Bytes.toBytes(col1), PBUtil.toBytes(colval))
     row_ne = KeyValue(rowkey1, Bytes.toBytes(fam1), Bytes.toBytes(col1), PBUtil.toBytes(mismatchval))
@@ -42,7 +42,7 @@ def test_column_eq():
     colfilt.reset()
 
     # test row missing column without 'filter if missing' flag
-    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1col1), ColumnMatchFilter.CompareOp.EQUAL, PBUtil.toBytes(colval), False)
+    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1), Bytes.toBytes(col1), ColumnMatchFilter.CompareOp.EQUAL, PBUtil.toBytes(colval), False)
 
     colfilt.filterKeyValue(row_missing)
     assertFalse( colfilt.filterRow(), "Row missing column should not be filtered without flag" )
@@ -60,7 +60,7 @@ def test_column_ne():
     mismatchval = java.lang.String('secondvalue')
     rowkey1 = Bytes.toBytes( java.lang.String('row1') )
 
-    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1col1), ColumnMatchFilter.CompareOp.NOT_EQUAL, PBUtil.toBytes(colval), True)
+    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1), Bytes.toBytes(col1), ColumnMatchFilter.CompareOp.NOT_EQUAL, PBUtil.toBytes(colval), True)
 
     row1 = KeyValue(rowkey1, Bytes.toBytes(fam1), Bytes.toBytes(col1), PBUtil.toBytes(colval))
     row_ne = KeyValue(rowkey1, Bytes.toBytes(fam1), Bytes.toBytes(col1), PBUtil.toBytes(mismatchval))
@@ -79,7 +79,7 @@ def test_column_ne():
     colfilt.reset()
 
     # test row missing column without 'filter if missing' flag
-    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1col1), ColumnMatchFilter.CompareOp.NOT_EQUAL, PBUtil.toBytes(colval), False)
+    colfilt = ColumnMatchFilter(Bytes.toBytes(fam1), Bytes.toBytes(col1), ColumnMatchFilter.CompareOp.NOT_EQUAL, PBUtil.toBytes(colval), False)
 
     colfilt.filterKeyValue(row_missing)
     assertFalse( colfilt.filterRow(), "Row missing column should not be filtered without flag" )

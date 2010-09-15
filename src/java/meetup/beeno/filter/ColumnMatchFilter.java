@@ -22,6 +22,7 @@ package meetup.beeno.filter;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -53,7 +54,8 @@ public class ColumnMatchFilter implements Filter {
 		GREATER;
 	}
 
-	private byte[] columnName;
+  private byte[] family;
+	private byte[] qualifier;
 	private CompareOp compareOp;
 	private byte[] value;
 	private boolean filterIfColumnMissing;
@@ -67,33 +69,30 @@ public class ColumnMatchFilter implements Filter {
 	/**
 	 * Constructor.
 	 * 
-	 * @param columnName
-	 *            name of column
-	 * @param compareOp
-	 *            operator
-	 * @param value
-	 *            value to compare column values against
+   * @param family name of column family
+   * @param qualifier name of column qualifier
+   * @param compareOp operator
+   * @param value value to compare column values against
 	 */
-	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp,
-			final byte[] value ) {
-		this(columnName, compareOp, value, true);
+	public ColumnMatchFilter( final byte[] family, final byte[] qualifier,
+      final CompareOp compareOp, final byte[] value ) {
+		this(family, qualifier, compareOp, value, true);
 	}
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param columnName
-	 *            name of column
-	 * @param compareOp
-	 *            operator
-	 * @param value
-	 *            value to compare column values against
-	 * @param filterIfColumnMissing
-	 *            if true then we will filter rows that don't have the column.
+	 * @param family name of column family
+   * @param qualifier name of column qualifier
+	 * @param compareOp operator
+	 * @param value value to compare column values against
+	 * @param filterIfColumnMissing if true then we will filter rows that don't have the column.
 	 */
-	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp,
-			final byte[] value, boolean filterIfColumnMissing ) {
-		this.columnName = columnName;
+	public ColumnMatchFilter( final byte[] family, final byte[] qualifier,
+      final CompareOp compareOp, final byte[] value,
+      boolean filterIfColumnMissing ) {
+		this.family = family;
+    this.qualifier = qualifier;
 		this.compareOp = compareOp;
 		this.value = value;
 		this.filterIfColumnMissing = filterIfColumnMissing;
@@ -102,32 +101,27 @@ public class ColumnMatchFilter implements Filter {
 	/**
 	 * Constructor.
 	 * 
-	 * @param columnName
-	 *            name of column
-	 * @param compareOp
-	 *            operator
-	 * @param comparator
-	 *            Comparator to use.
+   * @param family name of column family
+   * @param qualifier name of column qualifier
+   * @param compareOp operator
 	 */
-	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp ) {
-		this(columnName, compareOp, true);
+	public ColumnMatchFilter( final byte[] family, final byte[] qualifier,
+      final CompareOp compareOp ) {
+		this(family, qualifier, compareOp, true);
 	}
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param columnName
-	 *            name of column
-	 * @param compareOp
-	 *            operator
-	 * @param comparator
-	 *            Comparator to use.
-	 * @param filterIfColumnMissing
-	 *            if true then we will filter rows that don't have the column.
+   * @param family name of column family
+   * @param qualifier name of column qualifier
+   * @param compareOp operator
+   * @param filterIfColumnMissing if true then we will filter rows that don't have the column.
 	 */
-	public ColumnMatchFilter( final byte[] columnName, final CompareOp compareOp,
-			boolean filterIfColumnMissing ) {
-		this.columnName = columnName;
+	public ColumnMatchFilter( final byte[] family, final byte[] qualifier,
+      final CompareOp compareOp, boolean filterIfColumnMissing ) {
+		this.family = family;
+    this.qualifier = qualifier;
 		this.compareOp = compareOp;
 		this.filterIfColumnMissing = filterIfColumnMissing;
 	}
@@ -137,7 +131,7 @@ public class ColumnMatchFilter implements Filter {
 	}
 
 	public Filter.ReturnCode filterKeyValue( KeyValue v ) {
-		if (v.matchingColumn(this.columnName)) {
+		if (v.matchingColumn(this.family, this.qualifier)) {
 			byte[] val = v.getValue();
 			if (val != null && val.length > 0)
 				this.columnSeen = true;
@@ -150,7 +144,7 @@ public class ColumnMatchFilter implements Filter {
 		return Filter.ReturnCode.INCLUDE;
 	}
 
-	private boolean filterColumnValue( final byte[] data ) {
+  private boolean filterColumnValue( final byte[] data ) {
 		int compareResult;
 		compareResult = compare(value, data);
 
@@ -186,6 +180,18 @@ public class ColumnMatchFilter implements Filter {
 		return false;
 	}
 
+  @Override
+  public void filterRow(List<KeyValue> keyValues) {}
+
+  @Override
+  public KeyValue getNextKeyHint(KeyValue keyValue) {
+    return null;
+  }
+
+  public boolean hasFilterRow() {
+    return false;
+  }
+
 	private int compare( final byte[] b1, final byte[] b2 ) {
 		int len = Math.min(b1.length, b2.length);
 
@@ -208,7 +214,8 @@ public class ColumnMatchFilter implements Filter {
 			value = new byte[valueLen];
 			in.readFully(value);
 		}
-		columnName = Bytes.readByteArray(in);
+		family = Bytes.readByteArray(in);
+    qualifier = Bytes.readByteArray(in);
 		compareOp = CompareOp.valueOf(in.readUTF());
 		filterIfColumnMissing = in.readBoolean();
 	}
@@ -221,7 +228,8 @@ public class ColumnMatchFilter implements Filter {
 			out.writeInt(value.length);
 			out.write(value);
 		}
-		Bytes.writeByteArray(out, columnName);
+		Bytes.writeByteArray(out, family);
+    Bytes.writeByteArray(out, qualifier);
 		out.writeUTF(compareOp.name());
 		out.writeBoolean(filterIfColumnMissing);
 	}

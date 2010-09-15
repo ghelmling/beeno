@@ -1,6 +1,6 @@
-from org.apache.hadoop.hbase import HBaseClusterTestCase
+from org.apache.hadoop.hbase import HBaseTestingUtility
 
-class HBaseContext(HBaseClusterTestCase):
+class HBaseContext(HBaseTestingUtility):
     def __init__(self):
         super(HBaseContext, self).__init__()
         self.setName('beeno')
@@ -13,10 +13,10 @@ class HBaseContext(HBaseClusterTestCase):
     def setUp(self):
         if not self.running:
             self.running = True
-            HBaseClusterTestCase.setUp(self)
+            HBaseTestingUtility.startMiniCluster(self)
 
 
     def tearDown(self):
         if self.running:
             self.running = False
-            HBaseClusterTestCase.tearDown(self)
+            HBaseTestingUtility.shutdownMiniCluster(self)

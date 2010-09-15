@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import meetup.beeno.util.HUtil;
@@ -22,10 +23,10 @@ public class TestPool {
 	
 	
 	public void runPool() {
-		List<HTable> held = new LinkedList<HTable>();
+		List<HTableInterface> held = new LinkedList<HTableInterface>();
 		
 		for (int i=0; i<this.size; i++) {
-			HTable t = HUtil.getTable(table);
+			HTableInterface t = HUtil.getTable(table);
 			held.add( t );
 			Get g = new Get(Bytes.toBytes("4679998"));
 			try {
@@ -39,7 +40,7 @@ public class TestPool {
 		
 		System.out.printf("Fetched %d table instances\n", held.size());
 		
-		for (HTable t : held)
+		for (HTableInterface t : held)
 			HUtil.releaseTable(t);
 		
 		held = null;

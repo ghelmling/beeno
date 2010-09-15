@@ -11,6 +11,7 @@ import meetup.beeno.mapping.FieldMapping;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
@@ -41,13 +42,13 @@ public class HUtil {
 		pool = newPool;
 	}
 	
-	public static HTable getTable(String tablename) {
+	public static HTableInterface getTable(String tablename) {
 		if (log.isDebugEnabled())
 			log.debug("Getting table "+tablename+" from pool");
 		return pool.getTable(tablename);
 	}
 	
-	public static void releaseTable(HTable table) {
+	public static void releaseTable(HTableInterface table) {
 		if (table != null) {
 			if (log.isDebugEnabled())
 				log.debug("Returning table "+Bytes.toString(table.getTableName())+" to pool");

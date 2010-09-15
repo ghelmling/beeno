@@ -16,11 +16,7 @@ import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
 import org.apache.hadoop.hbase.HConstants;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.PageFilter;
@@ -55,7 +51,7 @@ public class ScanByIndex implements QueryStrategy {
 		ResultScanner scanner = null;
 
 		try {
-			HTable table = null;
+			HTableInterface table = null;
 			
 			try {
 				table = HUtil.getTable(info.getTablename());
@@ -120,7 +116,7 @@ public class ScanByIndex implements QueryStrategy {
 											byte[] startrow, 
 											byte[] stoprow,
 											Filter filter, 
-											HTable baseTable, 
+											HTableInterface baseTable, 
 											byte[][] families) 
 		throws IOException {
 		
@@ -131,7 +127,7 @@ public class ScanByIndex implements QueryStrategy {
 		if (filter != null)
 			idxScan.setFilter(filter);
 		
-		HTable idxTable = null;
+		HTableInterface idxTable = null;
 		ResultScanner wrapper = null;
 		try {
 			idxTable = HUtil.getTable(tablename);
@@ -207,14 +203,14 @@ public class ScanByIndex implements QueryStrategy {
 	
 	public static class IndexScannerWrapper implements ResultScanner {
 		private final ResultScanner indexScanner;
-		private final HTable baseTable;
+		private final HTableInterface baseTable;
 		private final byte[][] baseFamilies;
 		
-		IndexScannerWrapper(ResultScanner indexScanner, HTable baseTable) {
+		IndexScannerWrapper(ResultScanner indexScanner, HTableInterface baseTable) {
 			this(indexScanner, baseTable, null);
 		}
 		
-		IndexScannerWrapper(ResultScanner indexScanner, HTable baseTable, byte[][] families) {
+		IndexScannerWrapper(ResultScanner indexScanner, HTableInterface baseTable, byte[][] families) {
 			this.indexScanner = indexScanner;
 			this.baseTable = baseTable;
 			this.baseFamilies = families;

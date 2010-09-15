@@ -24,11 +24,7 @@ import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
 import org.apache.hadoop.hbase.KeyValue;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
@@ -105,7 +101,7 @@ public class EntityService<T> {
 	public T get(String rowKey) throws HBaseException {
 		T entity = null;
 		EntityInfo info = getInfo();
-		HTable table = null;
+		HTableInterface table = null;
 		try {
 			table = HUtil.getTable( info.getTablename() );
 			Get get = new Get(Bytes.toBytes(rowKey));
@@ -169,9 +165,6 @@ public class EntityService<T> {
 	
 	/**
 	 * Populate the entity's data fields using reflection.
-	 * 
-	 * @param entity
-	 * @param row
 	 */
 	public void populate(T entity, Result res) throws HBaseException {
 		// set the row key
@@ -182,7 +175,7 @@ public class EntityService<T> {
 		
 		Map<PropertyDescriptor,Object> collectionProps = new HashMap<PropertyDescriptor,Object>();
 		for (KeyValue kv : res.list()) {
-			String col = Bytes.toString(kv.getColumn());
+			String col = Bytes.toString(kv.getKey());
 			if (log.isDebugEnabled())
 				log.debug(String.format("populate(): column=%s", col));
 			
@@ -287,7 +280,7 @@ public class EntityService<T> {
 		EntityInfo info = getInfo();
 
 		// commit the update
-		HTable table = null;
+		HTableInterface table = null;
 		try {
 			table = HUtil.getTable(info.getTablename());
 			Delete op = new Delete( Bytes.toBytes(rowKey) );
@@ -314,7 +307,7 @@ public class EntityService<T> {
 			throw new IllegalArgumentException( String.format("Unknown property name '%s'", propertyName) );
 
 		// commit the delete
-		HTable table = null;
+		HTableInterface table = null;
 		try {
 			table = HUtil.getTable(info.getTablename());
 			Delete op = new Delete( Bytes.toBytes(rowKey) );
@@ -344,7 +337,7 @@ public class EntityService<T> {
 			throw new IllegalArgumentException( String.format("Property '%s' is not a Map type", propertyName) );
 
 		String columnName = field.getColumn() + mapKey;
-		HTable table = null;
+		HTableInterface table = null;
 		try {
 			table = HUtil.getTable(info.getTablename());
 			Delete op = new Delete( Bytes.toBytes(rowKey) );
@@ -428,7 +421,7 @@ public class EntityService<T> {
 	protected int processUpdates(String table, List<Put> updates)
 		throws HBaseException {
 
-		HTable ht = null;
+		HTableInterface ht = null;
 		try {
 			ht = HUtil.getTable(table);
 			ht.put(updates);
@@ -471,9 +464,6 @@ public class EntityService<T> {
 	
 	/**
 	 * Applies an update operation to all items returned by the query
-	 * @param entity
-	 * @return
-	 * @throws HBaseException
 	 */
 	public int update(Query query, EntityUpdate<T> updater) throws HBaseException {
 		List<T> items = query.execute();
