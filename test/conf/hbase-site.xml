@@ -37,10 +37,12 @@
     before running a retry of a failed get, region lookup, etc.</description>
   </property>
   <property>
-    <name>hbase.master.meta.thread.rescanfrequency</name>
-    <value>10000</value>
-    <description>How long the HMaster sleeps (in milliseconds) between scans of
-    the root and meta tables.
+    <name>hbase.client.retries.number</name>
+    <value>4</value>
+    <description>Maximum retries.  Used as maximum for all retryable
+    operations such as fetching of the root region from root region
+    server, getting a cell's value, starting a row update, etc.
+    Default: 10.
     </description>
   </property>
   <property>
@@ -56,15 +58,6 @@
     <description>Count of RPC Server instances spun up on RegionServers
     Same property is used by the HMaster for count of master handlers.
     Default is 10.
-    </description>
-  </property>
-  <property>
-    <name>hbase.master.lease.period</name>
-    <value>6000</value>
-    <description>Length of time the master will wait before timing out a region
-    server lease. Since region servers report in every second (see above), this
-    value has been reduced so that the master will notice a dead region server
-    sooner. The default is 30 seconds.
     </description>
   </property>
   <property>
@@ -99,7 +92,7 @@
   </property>
   <property>
     <name>hbase.regionserver.optionalcacheflushinterval</name>
-    <value>10000</value>
+    <value>1000</value>
     <description>
     Amount of time to wait since the last time a region was flushed before
     invoking an optional cache flush. Default 60,000.
