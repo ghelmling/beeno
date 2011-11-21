@@ -2,4 +2,4 @@
 
 BASEDIR=`dirname $0`
 
-$BASEDIR/jyunit $BASEDIR/../src/jython/jyunit/run.py $@
+$BASEDIR/jyunit $BASEDIR/../src/main/jython/jyunit/run.py $@
