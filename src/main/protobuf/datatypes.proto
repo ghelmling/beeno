@@ -1,7 +1,5 @@
 package hbase;
 
-import "google/protobuf/descriptor.proto";
-
 option java_package = "meetup.beeno";
 option java_outer_classname = "HDataTypes";
 

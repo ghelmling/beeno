@@ -217,7 +217,7 @@ public class PBUtil {
 			.build();
 	}
 	
-	public static HDataTypes.HField toMessage(Collection<? extends String> vals) {
+	public static HDataTypes.HField toMessage(Collection<String> vals) {
 		HDataTypes.StringList list = HDataTypes.StringList.newBuilder()
 			.addAllValues(vals)
 			.build();
