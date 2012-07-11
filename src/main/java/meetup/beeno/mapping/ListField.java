@@ -21,8 +21,12 @@ public class ListField extends FieldMapping {
 	protected Pattern fieldRegex = null;
 	public ListField(HProperty prop, PropertyDescriptor beanProperty) {
 		super(prop, beanProperty);
-		this.fieldRegex = Pattern.compile(this.family+":"+this.column+"_\\d+");
+		this.fieldRegex = Pattern.compile(this.getColumn()+"_\\d+");
 	}
 
-	public boolean matches(String fieldname) { return this.fieldRegex.matcher(fieldname).matches(); }
+  @Override
+	public boolean matches(ColumnQualifier qualifier) {
+    return this.getFamily().equals(qualifier.getFamily()) &&
+        this.fieldRegex.matcher(qualifier.getQualifier()).matches();
+  }
 }

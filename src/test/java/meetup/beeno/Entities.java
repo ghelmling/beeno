@@ -19,7 +19,7 @@ import meetup.beeno.HRowKey;
  * @author garyh
  *
  */
-public class TestEntities {
+public class Entities {
 	/**
 	 * Simple, happy path entity with all the right annotations
 	 * @author garyh

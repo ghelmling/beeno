@@ -14,12 +14,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import meetup.beeno.mapping.EntityInfo;
-import meetup.beeno.mapping.EntityMetadata;
-import meetup.beeno.mapping.FieldMapping;
-import meetup.beeno.mapping.IndexMapping;
-import meetup.beeno.mapping.MapField;
-import meetup.beeno.mapping.MappingException;
+import meetup.beeno.mapping.*;
 import meetup.beeno.util.HUtil;
 import meetup.beeno.util.PBUtil;
 
@@ -175,15 +170,18 @@ public class EntityService<T> {
 		
 		Map<PropertyDescriptor,Object> collectionProps = new HashMap<PropertyDescriptor,Object>();
 		for (KeyValue kv : res.list()) {
-			String col = Bytes.toString(kv.getKey());
+      // TODO: avoid unnecessary string conversions
+      String fam = Bytes.toString(kv.getFamily());
+			String col = Bytes.toString(kv.getQualifier());
+      ColumnQualifier qual = new ColumnQualifier(fam, col);
 			if (log.isDebugEnabled())
-				log.debug(String.format("populate(): column=%s", col));
+				log.debug(String.format("populate(): family=%s, column=%s", fam, col));
 			
-			PropertyDescriptor prop = info.getFieldProperty(col);
+			PropertyDescriptor prop = info.getFieldProperty(qual);
 			EntityMetadata.PropertyType propType = info.getPropertyType(prop);
 			byte[] fieldData = kv.getValue();
 			if (prop == null) {
-				log.warn(String.format("No entity property mapped for column '%s'", col));
+				log.warn(String.format("No entity property mapped for family=%s column=%s", fam, col));
 			}
 			else if ( Map.class.isAssignableFrom(prop.getPropertyType()) ) {
 				Map propVals = (Map) collectionProps.get(prop);
@@ -315,10 +313,10 @@ public class EntityService<T> {
 			table.delete(op);
 
 			if (log.isDebugEnabled())
-				log.debug(String.format("Deleted column '%s' for row '%s'", field.getFieldName(), rowKey));
+				log.debug(String.format("Deleted column '%s' for row '%s'", field.getQualifier(), rowKey));
 		}
 		catch (IOException ioe) {
-			throw new HBaseException(String.format("Error deleting column '%s' for row '%s'", field.getFieldName(), rowKey));
+			throw new HBaseException(String.format("Error deleting column '%s' for row '%s'", field.getQualifier(), rowKey));
 		}
 		finally {
 			HUtil.releaseTable(table);

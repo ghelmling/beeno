@@ -174,7 +174,7 @@ public class Criteria implements Externalizable {
 			
 			if (log.isDebugEnabled()) {
 				log.debug(String.format("PropertyComparison(%s, %s, %s): Creating ColumnRowFilter, column=%s", 
-						  this.property, this.value, this.op.toString(), mapping.getFieldName()));
+						  this.property, this.value, this.op.toString(), mapping.getQualifier()));
 			}
 			return new ColumnMatchFilter(Bytes.toBytes(mapping.getFamily()),
                      Bytes.toBytes(mapping.getColumn()),

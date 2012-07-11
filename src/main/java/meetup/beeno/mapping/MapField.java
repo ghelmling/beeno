@@ -21,13 +21,13 @@ public class MapField extends FieldMapping {
 	protected Pattern fieldRegex = null;
 	public MapField(HProperty prop, PropertyDescriptor beanProperty) {
 		super(prop, beanProperty);
-		if (this.column == null || this.column.equals("*"))
-			this.column = "";
-		
-		this.fieldRegex = Pattern.compile(this.family+":"+this.column+".+");
-		// fieldname should ignore wildcard pattern
-		this.fieldname = this.family + ":";
+
+		this.fieldRegex = Pattern.compile(this.getColumn()+".+");
 	}
 
-	public boolean matches(String fieldname) { return this.fieldRegex.matcher(fieldname).matches(); }
+  @Override
+	public boolean matches(ColumnQualifier qualifier) {
+    return this.getFamily().equals(qualifier.getFamily()) &&
+        this.fieldRegex.matcher(qualifier.getQualifier()).matches();
+  }
 }

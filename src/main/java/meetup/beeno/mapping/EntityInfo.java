@@ -82,9 +82,9 @@ public class EntityInfo {
 		curIndexes.add(index);
 	}
 	
-	public PropertyDescriptor getFieldProperty(String fieldname) {
+	public PropertyDescriptor getFieldProperty(ColumnQualifier qualifier) {
 		for (FieldMapping mapping : this.mappedProps) {
-			if (mapping.matches(fieldname)) {
+			if (mapping.matches(qualifier)) {
 				return mapping.getBeanProperty();
 			}
 		}
@@ -153,7 +153,7 @@ public class EntityInfo {
 		
 		return indexes;
 	}
-	
+  /*
 	public boolean isGettable(String fieldname) {
 		PropertyDescriptor prop = getFieldProperty(fieldname);
 		return (prop != null && prop.getReadMethod() != null);
@@ -163,6 +163,7 @@ public class EntityInfo {
 		PropertyDescriptor prop = getFieldProperty(fieldname);
 		return (prop != null && prop.getWriteMethod() != null);
 	}
+	*/
 	
 	public Collection<String> getColumnFamilyNames() {
 		if (this.columnFamilies == null) {

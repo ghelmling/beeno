@@ -5,7 +5,7 @@
   <groupId>meetup.beeno</groupId>
   <artifactId>beeno</artifactId>
   <packaging>jar</packaging>
-  <version>${beeno.version}</version>
+  <version>0.2-SNAPSHOT</version>
   <name>Beeno</name>
   <description>
   A simple Java beans mapping framework for Apache HBase.
@@ -62,11 +62,11 @@
       <url>https://repository.apache.org/content/repositories/releases/</url>
     </repository>
     <repository>
-      <id>mirror.facebook.net</id>
-      <name>facebook mirror</name>
-      <url>http://mirror.facebook.net/maven/repository/</url>
+      <id>apache non-releases</id>
+      <name>Apache non-releases</name>
+      <url>http://people.apache.org/~stack/m2/repository</url>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
       <releases>
         <enabled>true</enabled>
@@ -98,17 +98,6 @@
       <id>codehaus</id>
       <name>Codehaus Public</name>
       <url>http://repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>ibiblio.org</id>
-      <name>ibiblio mirror</name>
-      <url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -156,11 +145,23 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.5</version>
+          <version>${surefire.version}</version>
+          <dependencies>
+            <!-- by default surefire selects dynamically the connector to the unit tests tool.
+              We want to use always the same as the different connectors
+               can have different bugs and behaviour.
+            -->
+            <dependency>
+              <groupId>org.apache.maven.surefire</groupId>
+              <artifactId>${surefire.provider}</artifactId>
+              <version>${surefire.version}</version>
+            </dependency>
+          </dependencies>
+
           <configuration>
-            <forkedProcessTimeoutInSeconds>3600</forkedProcessTimeoutInSeconds>
-            <argLine>-Xmx512m</argLine>
-            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <forkedProcessTimeoutInSeconds>900</forkedProcessTimeoutInSeconds>
+            <argLine>-enableassertions -Xmx1900m -Djava.security.egd=file:/dev/./urandom</argLine>
+            <redirectTestOutputToFile>${test.output.tofile}</redirectTestOutputToFile>
           </configuration>
         </plugin>
         <plugin>
@@ -186,8 +187,20 @@
     <resources>
       <resource>
         <directory>src/main/resources/</directory>
+        <includes>
+          <include>log4j.properties</include>
+        </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources/</directory>
+        <includes>
+          <include>hbase-site.xml</include>
+          <include>log4j.properties</include>
+        </includes>
+      </testResource>
+    </testResources>
 
     <plugins>
       <plugin>
@@ -243,8 +256,8 @@
   <properties>
     <compileSource>1.6</compileSource>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hbase.version>0.90.4</hbase.version>
-    <hadoop.version>0.20.205.0</hadoop.version>
+    <hbase.version>0.90.3</hbase.version>
+    <hadoop.version>0.20-append-r1056497</hadoop.version>
 
     <commons-logging.version>1.1.1</commons-logging.version>
     <junit.version>4.8.1</junit.version>
@@ -253,6 +266,10 @@
 
     <protobuf.version>2.4.0a</protobuf.version>
     <guice.version>2.0</guice.version>
+
+    <surefire.version>2.5</surefire.version>
+    <surefire.provider>surefire-junit47</surefire.provider>
+    <test.output.tofile>true</test.output.tofile>
   </properties>
 
   <dependencies>

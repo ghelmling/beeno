@@ -12,22 +12,33 @@ import meetup.beeno.HProperty;
  * instance to a single column.
  */
 public class FieldMapping {
-	protected String family = null;
-	protected String column = null;
-	protected String fieldname = null;
+	protected ColumnQualifier qualifier = null;
 	protected PropertyDescriptor beanProperty = null;
+
 	public FieldMapping(HProperty prop, PropertyDescriptor beanProperty) {
-		this.family = prop.family();
-		this.column = prop.name();
-		this.fieldname = this.family+":"+this.column;
+		this.qualifier = new ColumnQualifier(prop.family(), prop.name());
 		this.beanProperty = beanProperty;
 	}
 
-	public boolean matches(String fieldname) { return this.fieldname.equals(fieldname); }
-	public PropertyDescriptor getBeanProperty() { return this.beanProperty; }
-	public String getFamily() { return this.family; }
-	public String getColumn() { return this.column; }
-	public String getFieldName() { return this.fieldname; }
+  public boolean matches(ColumnQualifier qualifier) {
+    return this.qualifier.equals(qualifier);
+  }
+
+	public PropertyDescriptor getBeanProperty() {
+    return this.beanProperty;
+  }
+
+	public String getFamily() {
+    return this.qualifier.getFamily();
+  }
+
+	public String getColumn() {
+    return this.qualifier.getQualifier();
+  }
+
+  public ColumnQualifier getQualifier() {
+    return this.qualifier;
+  }
 
 	public static FieldMapping get(HProperty prop, PropertyDescriptor beanProperty) {
 		if (Map.class.isAssignableFrom(beanProperty.getPropertyType())) {

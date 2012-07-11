@@ -15,7 +15,7 @@ basedir=$( cd -P -- "$prgdir/.." > /dev/null && pwd -P )
 
 . $prgdir/env.sh
 
-JYTHON_CP=$basedir/build:$basedir/src/test/resources:$CP
+JYTHON_CP=$basedir/target/classes:$basedir/src/test/resources:$CP
 export JYTHON_CP
 
 #export LOG4J_OPTS="-Dlog4j.configuration=log4j_test.properties" # to change default log level add -Dlog4j.info
@@ -41,6 +41,6 @@ fi
 #fi
 
 # additional paths for python code
-export pypath=$basedir/src/test/jython
+export pypath=$basedir/src/main/jython:$basedir/src/test/jython
 
 . $prgdir/jython

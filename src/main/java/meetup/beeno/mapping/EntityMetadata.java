@@ -144,8 +144,8 @@ public class EntityMetadata {
 		// check for property mapping
 		HProperty propAnnotation = (HProperty) meth.getAnnotation(HProperty.class);
 		if (propAnnotation != null) {
-			String fieldname = fieldToString(propAnnotation);
-			PropertyDescriptor currentMapped = info.getFieldProperty(fieldname);
+      ColumnQualifier qual = new ColumnQualifier(propAnnotation.family(), propAnnotation.name());
+			PropertyDescriptor currentMapped = info.getFieldProperty(qual);
 			// check for a duplicate mapping
 			if (currentMapped != null && !prop.equals(currentMapped)) {
 				throw new MappingException( info.getEntityClass(),

@@ -31,8 +31,9 @@ public class HUtil {
 	private static final int MAX_POOL_SIZE = 100;
 
 	private static Logger log = Logger.getLogger(HUtil.class.getName());
-	
-	private static HTablePool pool = new HTablePool(new HBaseConfiguration(), MAX_POOL_SIZE);
+
+  // FIXME: this should be more controllable than forcing a static pool
+	private static HTablePool pool = new HTablePool(HBaseConfiguration.create(), MAX_POOL_SIZE);
 	
 	public static HTablePool getPool() {
 		return pool;
